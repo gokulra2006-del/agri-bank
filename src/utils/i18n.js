@@ -10,6 +10,43 @@ export const SUPPORTED_LANGUAGES = [
 ];
 
 export const DICTIONARY = {
+  // Navigation Section Groups
+  nav_group_overview: {
+    en: 'Overview & Analytics',
+    hi: 'अवलोकन एवं विश्लेषण',
+    kn: 'ಅವಲೋಕನ ಮತ್ತು ವಿಶ್ಲೇಷಣೆ',
+    ta: 'கண்ணோட்டம் மற்றும் பகுப்பாய்வு',
+    te: 'సమీక్ష & విశ్లేషణ'
+  },
+  nav_group_farmers_credit: {
+    en: 'Farmers & Credit',
+    hi: 'किसान एवं ऋण',
+    kn: 'ರೈತರು ಮತ್ತು ಸಾಲ',
+    ta: 'விவசாயிகள் மற்றும் கடன்',
+    te: 'రైతులు & వ్యవసాయ రుణాలు'
+  },
+  nav_group_field_ops: {
+    en: 'Field Operations',
+    hi: 'क्षेत्रीय कार्य',
+    kn: 'ಕ್ಷೇತ್ರ ಕಾರ್ಯಾಚರಣೆಗಳು',
+    ta: 'கள நடவடிக்கைகள்',
+    te: 'క్షేత్ర కార్యకలాపాలు'
+  },
+  nav_group_climate_risk: {
+    en: 'Climate Risk & Resilience',
+    hi: 'जलवायु जोखिम व प्रत्यास्थता',
+    kn: 'ಹವಾಮಾನ ಅಪಾಯ ಮತ್ತು ಚೇತರಿಕೆ',
+    ta: 'காலநிலை இடர் & மீள்தன்மை',
+    te: 'వాతావరణ రిస్క్ & తట్టుకునే శక్తి'
+  },
+  nav_group_governance: {
+    en: 'Governance & Support',
+    hi: 'शासन, अनुपालन व सहायता',
+    kn: 'ಆಡಳಿತ ಮತ್ತು ಬೆಂಬಲ',
+    ta: 'நிர்வாகம் மற்றும் ஆதரவு',
+    te: 'పాలన & సహాయం'
+  },
+
   // Navigation Items
   nav_dashboard: {
     en: 'Dashboard',

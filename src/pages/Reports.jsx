@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart3, Download, FileSpreadsheet, Printer, Filter, CheckCircle2, IndianRupee, Layers, CheckSquare, Clock } from 'lucide-react';
-import { formatINR, maskAadhaar } from '../data/mockStore';
+import { formatINR, maskAadhaar, formatDate } from '../data/mockStore';
 
 export default function Reports({ loans = [], farmers = [], repayments = [], branches = [] }) {
   const [reportType, setReportType] = useState('portfolio'); // 'portfolio', 'repayment', 'farmer'
@@ -252,7 +252,7 @@ export default function Reports({ loans = [], farmers = [], repayments = [], bra
                     <td style={{ color: '#1e3a8a' }}>{r.loanId}</td>
                     <td>{r.farmerName}</td>
                     <td>{r.cropSeason}</td>
-                    <td>{r.dueDate}</td>
+                    <td>{formatDate(r.dueDate)}</td>
                     <td style={{ fontWeight: 600 }}>{formatINR(r.amountDue)}</td>
                     <td style={{ fontWeight: 600, color: '#15803d' }}>{formatINR(r.amountPaid)}</td>
                     <td>{r.status}</td>

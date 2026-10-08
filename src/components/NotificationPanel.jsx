@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bell, Check, Clock, AlertTriangle, FileText, CheckCircle2, X } from 'lucide-react';
 import { saveNotifications } from '../data/mockStore';
 
 export default function NotificationPanel({ isOpen, onClose, notifications = [], onUpdateNotifications, onNavigate }) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleMarkAllRead = () => {
@@ -37,6 +49,9 @@ export default function NotificationPanel({ isOpen, onClose, notifications = [],
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Notifications and Alerts Panel"
       style={{
         position: 'fixed',
         top: '64px',
@@ -75,6 +90,7 @@ export default function NotificationPanel({ isOpen, onClose, notifications = [],
           </button>
           <button
             onClick={onClose}
+            aria-label="Close notifications panel"
             style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
           >
             <X size={16} />

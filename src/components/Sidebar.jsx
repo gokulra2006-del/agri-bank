@@ -30,10 +30,11 @@ import { hasRouteAccess } from '../utils/rbac';
 import { t } from '../utils/i18n';
 
 export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, currentRole = 'manager', currentLang = 'en' }) {
-  // Navigation organized into clean logical functional groups
+  // Navigation organized into clean logical functional groups with multilingual support
   const navSections = [
     {
-      groupLabel: 'Overview & Analytics',
+      groupKey: 'nav_group_overview',
+      defaultGroupLabel: 'Overview & Analytics',
       items: [
         { id: 'dashboard', labelKey: 'nav_dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
         { id: 'impact-dashboard', labelKey: 'nav_impact_dashboard', defaultLabel: 'Impact Dashboard', icon: TrendingUp },
@@ -41,7 +42,8 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       ]
     },
     {
-      groupLabel: 'Farmers & Credit',
+      groupKey: 'nav_group_farmers_credit',
+      defaultGroupLabel: 'Farmers & Credit',
       items: [
         { id: 'farmers', labelKey: 'nav_farmers', defaultLabel: 'Farmers Directory', icon: Users },
         { id: 'loans', labelKey: 'nav_loans', defaultLabel: 'Loan Applications', icon: FileText },
@@ -51,7 +53,8 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       ]
     },
     {
-      groupLabel: 'Field Operations',
+      groupKey: 'nav_group_field_ops',
+      defaultGroupLabel: 'Field Operations',
       items: [
         { id: 'field-mode', labelKey: 'nav_field_mode', defaultLabel: 'Field Officer Mode', icon: Compass },
         { id: 'documents', labelKey: 'nav_documents', defaultLabel: 'Documents Vault', icon: FolderOpen },
@@ -60,7 +63,8 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       ]
     },
     {
-      groupLabel: 'Climate Risk & Resilience',
+      groupKey: 'nav_group_climate_risk',
+      defaultGroupLabel: 'Climate Risk & Resilience',
       items: [
         { id: 'risk-monitoring', labelKey: 'nav_risk_monitoring', defaultLabel: 'Credit Risk Radar', icon: ShieldAlert },
         { id: 'risk-simulator', labelKey: 'nav_risk_simulator', defaultLabel: 'What-If Risk Simulator', icon: Sliders },
@@ -69,7 +73,8 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       ]
     },
     {
-      groupLabel: 'Governance & Support',
+      groupKey: 'nav_group_governance',
+      defaultGroupLabel: 'Governance & Support',
       items: [
         { id: 'schemes', labelKey: 'nav_schemes', defaultLabel: 'Schemes & Subsidies', icon: Landmark },
         { id: 'privacy-center', labelKey: 'nav_privacy_center', defaultLabel: 'Farmer Consent & Privacy', icon: Lock },
@@ -154,6 +159,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
             onClick={onClose}
             className="mobile-close-btn"
             style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+            aria-label="Close navigation sidebar"
           >
             <X size={20} />
           </button>
@@ -168,7 +174,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
             return (
               <div key={sIdx} style={{ marginBottom: '0.875rem' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#94a3b8', padding: '0.25rem 0.75rem', letterSpacing: '0.05em' }}>
-                  {section.groupLabel}
+                  {t(section.groupKey, currentLang, section.defaultGroupLabel)}
                 </div>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                   {filteredItems.map((item) => {
@@ -177,6 +183,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
                     return (
                       <button
                         key={item.id}
+                        aria-current={active ? 'page' : undefined}
                         onClick={() => {
                           setCurrentPage(item.id);
                           if (onClose) onClose();
@@ -186,6 +193,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
                           alignItems: 'center',
                           gap: '0.65rem',
                           padding: '0.5rem 0.75rem',
+                          minHeight: '40px',
                           borderRadius: '0.375rem',
                           fontSize: '0.8125rem',
                           fontWeight: active ? 600 : 500,

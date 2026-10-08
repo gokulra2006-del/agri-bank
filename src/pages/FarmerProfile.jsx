@@ -110,7 +110,7 @@ export default function FarmerProfile({
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.25rem', fontSize: '0.8125rem', color: '#64748b', flexWrap: 'wrap' }}>
                 <span>ID: <strong>{farmer.id}</strong></span>
                 <span>Phone: <strong>{farmer.phone}</strong></span>
-                <span>Aadhaar: <strong>{farmer.aadhaarMasked}</strong></span>
+                <span>Aadhaar: <strong>{maskAadhaar(farmer.aadhaarMasked)}</strong></span>
                 <span>Branch: <strong>{farmer.assignedBranch}</strong></span>
               </div>
             </div>

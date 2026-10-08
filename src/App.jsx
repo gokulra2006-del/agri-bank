@@ -1,34 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import NotificationPanel from './components/NotificationPanel';
 
-// Pages
-import Dashboard from './pages/Dashboard';
-import Farmers from './pages/Farmers';
-import FarmerProfile from './pages/FarmerProfile';
-import LoanApplications from './pages/LoanApplications';
-import LoanDetail from './pages/LoanDetail';
-import Eligibility from './pages/Eligibility';
-import Repayments from './pages/Repayments';
-import CropCalendar from './pages/CropCalendar';
-import SchemesInsurance from './pages/SchemesInsurance';
-import Documents from './pages/Documents';
-import BranchesStaff from './pages/BranchesStaff';
-import Reports from './pages/Reports';
-import NotificationsPage from './pages/NotificationsPage';
-import SettingsPage from './pages/SettingsPage';
-import FieldOfficerMode from './pages/FieldOfficerMode';
-import RiskMonitoring from './pages/RiskMonitoring';
-import WeatherRiskPanel from './pages/WeatherRiskPanel';
-import AuditLogPage from './pages/AuditLogPage';
-import HelpDesk from './pages/HelpDesk';
-import InnovationCenter from './pages/InnovationCenter';
-import RepaymentPlannerPage from './pages/RepaymentPlannerPage';
-import RiskSimulatorPage from './pages/RiskSimulatorPage';
-import VillageHeatmapPage from './pages/VillageHeatmapPage';
-import PrivacyCenterPage from './pages/PrivacyCenterPage';
-import ImpactDashboardPage from './pages/ImpactDashboardPage';
+// Lazy Loaded Pages for Performance & Route-Level Code Splitting
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Farmers = lazy(() => import('./pages/Farmers'));
+const FarmerProfile = lazy(() => import('./pages/FarmerProfile'));
+const LoanApplications = lazy(() => import('./pages/LoanApplications'));
+const LoanDetail = lazy(() => import('./pages/LoanDetail'));
+const Eligibility = lazy(() => import('./pages/Eligibility'));
+const Repayments = lazy(() => import('./pages/Repayments'));
+const CropCalendar = lazy(() => import('./pages/CropCalendar'));
+const SchemesInsurance = lazy(() => import('./pages/SchemesInsurance'));
+const Documents = lazy(() => import('./pages/Documents'));
+const BranchesStaff = lazy(() => import('./pages/BranchesStaff'));
+const Reports = lazy(() => import('./pages/Reports'));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const FieldOfficerMode = lazy(() => import('./pages/FieldOfficerMode'));
+const RiskMonitoring = lazy(() => import('./pages/RiskMonitoring'));
+const WeatherRiskPanel = lazy(() => import('./pages/WeatherRiskPanel'));
+const AuditLogPage = lazy(() => import('./pages/AuditLogPage'));
+const HelpDesk = lazy(() => import('./pages/HelpDesk'));
+const InnovationCenter = lazy(() => import('./pages/InnovationCenter'));
+const RepaymentPlannerPage = lazy(() => import('./pages/RepaymentPlannerPage'));
+const RiskSimulatorPage = lazy(() => import('./pages/RiskSimulatorPage'));
+const VillageHeatmapPage = lazy(() => import('./pages/VillageHeatmapPage'));
+const PrivacyCenterPage = lazy(() => import('./pages/PrivacyCenterPage'));
+const ImpactDashboardPage = lazy(() => import('./pages/ImpactDashboardPage'));
+
+const PageLoader = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '360px', gap: '0.75rem', color: '#64748b' }} role="status" aria-live="polite">
+    <div style={{ width: '2.25rem', height: '2.25rem', border: '3px solid #e2e8f0', borderTopColor: '#15803d', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+    <span style={{ fontSize: '0.8125rem', fontWeight: 500 }}>Loading banking module...</span>
+  </div>
+);
 
 // RBAC & Access Restriction
 import AccessDenied from './components/AccessDenied';
@@ -439,7 +446,7 @@ export default function App() {
               onNavigateHome={() => handleNavigate('dashboard')}
             />
           ) : (
-            <>
+            <Suspense fallback={<PageLoader />}>
               {currentPage === 'innovation-center' && (
                 <InnovationCenter
                   farmers={farmers}
@@ -653,7 +660,7 @@ export default function App() {
               {currentPage === 'settings' && (
                 <SettingsPage />
               )}
-            </>
+            </Suspense>
           )}
         </main>
 

@@ -9,11 +9,12 @@ import {
   Phone,
   MapPin,
   FileCheck2,
+  AlertTriangle,
   X
 } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { formatINR } from '../data/mockStore';
+import { formatINR, formatDate } from '../data/mockStore';
 import { calculateResilienceScore } from '../utils/resilienceEngine';
 
 export default function Farmers({
@@ -34,6 +35,7 @@ export default function Farmers({
   // Add/Edit modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFarmer, setEditingFarmer] = useState(null);
+  const [formError, setFormError] = useState(null);
 
   // Delete modal state
   const [deleteModalTarget, setDeleteModalTarget] = useState(null);
@@ -85,6 +87,7 @@ export default function Farmers({
 
   const openAddModal = () => {
     setEditingFarmer(null);
+    setFormError(null);
     setFormData({
       name: '',
       phone: '+91 ',
@@ -106,14 +109,33 @@ export default function Farmers({
 
   const openEditModal = (farmer) => {
     setEditingFarmer(farmer);
+    setFormError(null);
     setFormData({ ...farmer });
     setIsModalOpen(true);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    setFormError(null);
     if (!formData.name.trim() || !formData.phone.trim()) {
-      alert('Please fill out the farmer name and contact phone number.');
+      setFormError('Please fill out the farmer name and contact phone number.');
+      return;
+    }
+
+    const cleanPhone = formData.phone.trim().replace(/[\s\-\+]/g, '');
+    if (cleanPhone.length < 10) {
+      setFormError('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    // Duplicate farmer validation: check if phone already exists
+    const duplicate = farmers.find(f => {
+      const existingClean = (f.phone || '').trim().replace(/[\s\-\+]/g, '');
+      return existingClean.endsWith(cleanPhone.slice(-10)) && (!editingFarmer || f.id !== editingFarmer.id);
+    });
+
+    if (duplicate) {
+      setFormError(`A farmer with this mobile number is already registered: ${duplicate.name} (${duplicate.id}, ${duplicate.village}).`);
       return;
     }
 
@@ -127,9 +149,10 @@ export default function Farmers({
         existingLoanBurden: Number(formData.existingLoanBurden)
       });
     } else {
+      const nextNum = farmers.length + 1;
       const newFarmer = {
         ...formData,
-        id: `FAR-00${farmers.length + 1}`,
+        id: `FAR-${String(nextNum).padStart(3, '0')}`,
         aadhaarMasked: 'XXXX-XXXX-' + Math.floor(1000 + Math.random() * 9000),
         registeredDate: new Date().toISOString().split('T')[0],
         landSize: Number(formData.landSize),
@@ -363,15 +386,48 @@ export default function Farmers({
       {/* Add / Edit Farmer Modal */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '38rem', padding: '1.5rem' }}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '38rem', padding: '1.5rem' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="farmer-modal-heading"
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.75rem' }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#0f172a' }}>
+              <h3 id="farmer-modal-heading" style={{ fontSize: '1.125rem', fontWeight: 600, color: '#0f172a' }}>
                 {editingFarmer ? 'Edit Farmer Profile' : 'Register New Agricultural Borrower'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                aria-label="Close dialog"
+              >
                 <X size={20} />
               </button>
             </div>
+
+            {formError && (
+              <div
+                style={{
+                  backgroundColor: '#fee2e2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '0.375rem',
+                  padding: '0.625rem 0.875rem',
+                  color: '#b91c1c',
+                  fontSize: '0.8125rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginBottom: '0.75rem'
+                }}
+                role="alert"
+                aria-live="polite"
+              >
+                <AlertTriangle size={16} />
+                <span>{formError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', paddingRight: '0.25rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>

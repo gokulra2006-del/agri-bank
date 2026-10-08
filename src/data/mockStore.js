@@ -37,7 +37,7 @@ const STORAGE_KEYS = {
   CONSENT_RECORDS: 'agrisahay_consent_records'
 };
 
-const CURRENT_VERSION = '3.0';
+const CURRENT_VERSION = '4.0';
 
 // Safe storage initialization & migration
 const checkStorageMigration = () => {
@@ -45,6 +45,12 @@ const checkStorageMigration = () => {
     if (typeof localStorage === 'undefined') return;
     const version = localStorage.getItem(STORAGE_KEYS.VERSION);
     if (!version || version !== CURRENT_VERSION) {
+      // Version upgrade: Flush legacy caches to load rich 4.0 schema
+      Object.values(STORAGE_KEYS).forEach(k => {
+        try {
+          localStorage.removeItem(k);
+        } catch (e) { /* ignore */ }
+      });
       localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_VERSION);
     }
   } catch (e) {
@@ -55,16 +61,29 @@ checkStorageMigration();
 
 const getStorageItem = (key, defaultVal) => {
   try {
+    if (typeof localStorage === 'undefined') return defaultVal;
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultVal;
+    if (!item) return defaultVal;
+    const parsed = JSON.parse(item);
+    // Sanity check: if default is array, parsed must be array
+    if (Array.isArray(defaultVal) && !Array.isArray(parsed)) {
+      setStorageItem(key, defaultVal);
+      return defaultVal;
+    }
+    return parsed;
   } catch (e) {
-    console.error('LocalStorage read error:', e);
+    console.error('LocalStorage read error (auto-healing):', e);
+    // Auto-heal corrupt storage
+    try {
+      setStorageItem(key, defaultVal);
+    } catch (saveErr) { /* ignore */ }
     return defaultVal;
   }
 };
 
 const setStorageItem = (key, val) => {
   try {
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(key, JSON.stringify(val));
   } catch (e) {
     console.error('LocalStorage write error:', e);
@@ -125,20 +144,16 @@ export const saveSettings = (settings) => setStorageItem(STORAGE_KEYS.SETTINGS, 
 
 // Helper for resetting demo state
 export const resetDemoData = () => {
-  localStorage.removeItem(STORAGE_KEYS.FARMERS);
-  localStorage.removeItem(STORAGE_KEYS.LOANS);
-  localStorage.removeItem(STORAGE_KEYS.REPAYMENTS);
-  localStorage.removeItem(STORAGE_KEYS.DOCUMENTS);
-  localStorage.removeItem(STORAGE_KEYS.NOTIFICATIONS);
-  localStorage.removeItem(STORAGE_KEYS.BRANCHES);
-  localStorage.removeItem(STORAGE_KEYS.STAFF);
-  localStorage.removeItem(STORAGE_KEYS.FIELD_VISITS);
-  localStorage.removeItem(STORAGE_KEYS.COMMUNICATIONS);
-  localStorage.removeItem(STORAGE_KEYS.OFFLINE_QUEUE);
-  localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
-  localStorage.removeItem(STORAGE_KEYS.SETTINGS);
-  localStorage.removeItem(STORAGE_KEYS.VERSION);
-  window.location.reload();
+  if (typeof localStorage !== 'undefined') {
+    Object.values(STORAGE_KEYS).forEach(k => {
+      try {
+        localStorage.removeItem(k);
+      } catch (e) { /* ignore */ }
+      });
+  }
+  if (typeof window !== 'undefined') {
+    window.location.reload();
+  }
 };
 
 // Scale of Finance & Assessment Rule Engine
@@ -215,4 +230,19 @@ export const maskAadhaar = (val) => {
     return `XXXX-XXXX-${last4}`;
   }
   return 'XXXX-XXXX-8921';
+};
+
+export const formatDate = (dateStr) => {
+  if (!dateStr) return 'N/A';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const day = String(d.getDate()).padStart(2, '0');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+  } catch (e) {
+    return dateStr;
+  }
 };

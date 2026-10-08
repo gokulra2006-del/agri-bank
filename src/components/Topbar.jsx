@@ -61,6 +61,7 @@ export default function Topbar({
           className="topbar-toggle-btn"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', color: '#475569', display: 'flex', alignItems: 'center' }}
           title="Toggle Navigation"
+          aria-label="Toggle navigation menu"
         >
           <Menu size={22} />
         </button>
@@ -75,6 +76,7 @@ export default function Topbar({
             type="text"
             placeholder="Search farmer name, loan ID, village..."
             value={searchTerm}
+            aria-label="Search farmer name, loan ID, or village"
             onChange={(e) => {
               setSearchTerm(e.target.value);
               if (onSearch) onSearch(e.target.value);
@@ -99,6 +101,7 @@ export default function Topbar({
           <select
             value={settings.activeBranchId}
             onChange={handleBranchChange}
+            aria-label="Select active branch"
             style={{
               fontSize: '0.75rem',
               fontWeight: 500,
@@ -122,6 +125,7 @@ export default function Topbar({
           <select
             value={currentRole}
             onChange={(e) => onRoleChange(e.target.value)}
+            aria-label="Select demo role"
             style={{
               fontSize: '0.75rem',
               fontWeight: 600,
@@ -142,6 +146,7 @@ export default function Topbar({
           <select
             value={currentLang}
             onChange={(e) => onLangChange(e.target.value)}
+            aria-label="Select interface language"
             style={{
               fontSize: '0.75rem',
               fontWeight: 500,
@@ -171,6 +176,7 @@ export default function Topbar({
             borderRadius: '0.375rem'
           }}
           title="Notifications & Alerts"
+          aria-label="View notifications and alerts"
         >
           <Bell size={19} />
           {unreadCount > 0 && (
