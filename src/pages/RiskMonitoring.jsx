@@ -8,10 +8,13 @@ import {
   Layers,
   ArrowRight,
   TrendingDown,
-  Info
+  Info,
+  HeartHandshake,
+  Sparkles
 } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import { formatINR } from '../data/mockStore';
+import { detectFarmerFinancialStress } from '../utils/climatePlatformUtils';
 
 export default function RiskMonitoring({
   farmers = [],
@@ -22,6 +25,10 @@ export default function RiskMonitoring({
   onNavigateToLoan
 }) {
   const [filterCategory, setFilterCategory] = useState('ALL');
+  const [stressFilter, setStressFilter] = useState('ALL');
+
+  // Compute Early Financial Stress scores for each farmer
+  const farmerStressList = farmers.map(f => detectFarmerFinancialStress(f, loans, repayments));
 
   // Compute early warning indicators from live dataset
   const riskItems = [];
@@ -120,6 +127,48 @@ export default function RiskMonitoring({
         <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
           Dynamic monitoring of non-performing asset indicators, rainfed vulnerability, and documentation pendency
         </p>
+      </div>
+
+      {/* Early Financial Stress Detection Panel (Supportive & Dignified Approach) */}
+      <div className="card" style={{ padding: '1.25rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem', color: '#1e40af', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase' }}>
+              <HeartHandshake size={14} />
+              Early Financial Stress Detection (Supportive Guidance)
+            </div>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', margin: '0.2rem 0 0 0' }}>
+              Borrower Cash Flow Stress Monitor
+            </h3>
+          </div>
+          <div style={{ fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic' }}>
+            Never labels a farmer negatively. Flags early distress to facilitate harvest holidays and crop insurance claims.
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
+          {farmerStressList.slice(0, 4).map((str, idx) => (
+            <div key={idx} style={{ padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px', border: `1px solid ${str.badgeColor}44`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong style={{ fontSize: '0.9375rem', color: '#0f172a' }}>{str.farmerName}</strong>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px', backgroundColor: str.badgeBg, color: str.badgeColor }}>
+                    {str.stressTier}
+                  </span>
+                </div>
+                <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.75rem', color: '#475569' }}>
+                  {str.stressReasons.map((r, rIdx) => (
+                    <div key={rIdx}>• {r}</div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0', fontSize: '0.75rem', color: '#166534', fontWeight: 600 }}>
+                💡 Action: {str.supportiveActions[0] || 'Schedule friendly harvest review.'}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Summary Risk Cards */}

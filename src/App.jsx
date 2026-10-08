@@ -24,6 +24,11 @@ import WeatherRiskPanel from './pages/WeatherRiskPanel';
 import AuditLogPage from './pages/AuditLogPage';
 import HelpDesk from './pages/HelpDesk';
 import InnovationCenter from './pages/InnovationCenter';
+import RepaymentPlannerPage from './pages/RepaymentPlannerPage';
+import RiskSimulatorPage from './pages/RiskSimulatorPage';
+import VillageHeatmapPage from './pages/VillageHeatmapPage';
+import PrivacyCenterPage from './pages/PrivacyCenterPage';
+import ImpactDashboardPage from './pages/ImpactDashboardPage';
 
 // RBAC & Access Restriction
 import AccessDenied from './components/AccessDenied';
@@ -290,6 +295,21 @@ export default function App() {
     });
   };
 
+  const handleApplyPlanToLoan = (loanId, plan) => {
+    const updated = loans.map(l => {
+      if (l.id === loanId) {
+        return {
+          ...l,
+          repaymentScheduleType: 'Harvest-Linked Balloon',
+          harvestPlan: plan
+        };
+      }
+      return l;
+    });
+    saveLoans(updated);
+    setLoansState(updated);
+  };
+
   // Field Visits Handlers
   const handleUpdateVisits = (updatedVisits) => {
     saveFieldVisits(updatedVisits);
@@ -521,7 +541,52 @@ export default function App() {
               {currentPage === 'repayments' && (
                 <Repayments
                   repayments={repayments}
+                  farmers={farmers}
                   onUpdateRepayment={handleUpdateRepayment}
+                />
+              )}
+
+              {currentPage === 'repayment-planner' && (
+                <RepaymentPlannerPage
+                  farmers={farmers}
+                  loans={loans}
+                  onApplyPlanToLoan={handleApplyPlanToLoan}
+                  onLogAudit={logAudit}
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'risk-simulator' && (
+                <RiskSimulatorPage
+                  farmers={farmers}
+                  loans={loans}
+                />
+              )}
+
+              {currentPage === 'village-heatmap' && (
+                <VillageHeatmapPage
+                  farmers={farmers}
+                />
+              )}
+
+              {currentPage === 'privacy-center' && (
+                <PrivacyCenterPage
+                  farmers={farmers}
+                  loans={loans}
+                  documents={documents}
+                  visits={visits}
+                  onUpdateFarmer={handleUpdateFarmer}
+                  onLogAudit={logAudit}
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'impact-dashboard' && (
+                <ImpactDashboardPage
+                  farmers={farmers}
+                  loans={loans}
+                  repayments={repayments}
+                  visits={visits}
                 />
               )}
 
@@ -545,7 +610,7 @@ export default function App() {
               )}
 
               {currentPage === 'schemes' && (
-                <SchemesInsurance />
+                <SchemesInsurance farmers={farmers} />
               )}
 
               {currentPage === 'documents' && (

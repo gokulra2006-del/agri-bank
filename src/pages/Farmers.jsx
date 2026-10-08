@@ -14,6 +14,7 @@ import {
 import StatusBadge from '../components/StatusBadge';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { formatINR } from '../data/mockStore';
+import { calculateResilienceScore } from '../utils/resilienceEngine';
 
 export default function Farmers({
   farmers = [],
@@ -222,6 +223,7 @@ export default function Farmers({
                 <th>Farmer ID & Name</th>
                 <th>Location</th>
                 <th>Land & Crop</th>
+                <th>Resilience Score</th>
                 <th>Annual Income</th>
                 <th>Document KYC</th>
                 <th>Branch</th>
@@ -231,46 +233,67 @@ export default function Farmers({
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
                     No matching farmers found.
                   </td>
                 </tr>
               ) : (
-                paginated.map((farmer) => (
-                  <tr key={farmer.id}>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                paginated.map((farmer) => {
+                  const res = calculateResilienceScore(farmer);
+                  return (
+                    <tr key={farmer.id}>
+                      <td>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span
+                            onClick={() => onSelectFarmer(farmer.id)}
+                            style={{ fontWeight: 600, color: '#1e3a8a', cursor: 'pointer', textDecoration: 'underline' }}
+                          >
+                            {farmer.name}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{farmer.id} • {farmer.phone}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem' }}>
+                          <MapPin size={13} color="#64748b" />
+                          <span>{farmer.village}, {farmer.district}</span>
+                        </div>
+                        <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{farmer.state}</span>
+                      </td>
+                      <td>
+                        <span style={{ fontWeight: 500, display: 'block' }}>{farmer.primaryCrop}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{farmer.landSize} Acres ({farmer.landType})</span>
+                      </td>
+                      <td>
                         <span
-                          onClick={() => onSelectFarmer(farmer.id)}
-                          style={{ fontWeight: 600, color: '#1e3a8a', cursor: 'pointer', textDecoration: 'underline' }}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            backgroundColor: res.badgeBg,
+                            color: res.badgeColor,
+                            border: `1px solid ${res.badgeColor}33`
+                          }}
+                          title={res.category}
                         >
-                          {farmer.name}
+                          {res.score}/100
                         </span>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{farmer.id} • {farmer.phone}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem' }}>
-                        <MapPin size={13} color="#64748b" />
-                        <span>{farmer.village}, {farmer.district}</span>
-                      </div>
-                      <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{farmer.state}</span>
-                    </td>
-                    <td>
-                      <span style={{ fontWeight: 500, display: 'block' }}>{farmer.primaryCrop}</span>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{farmer.landSize} Acres ({farmer.landType})</span>
-                    </td>
-                    <td>
-                      <span style={{ fontWeight: 600 }}>{formatINR(farmer.annualIncome)}</span>
-                      {farmer.alliedIncome > 0 && (
-                        <span style={{ fontSize: '0.7rem', color: '#15803d', display: 'block' }}>
-                          +{formatINR(farmer.alliedIncome)} allied
-                        </span>
-                      )}
-                    </td>
-                    <td>
-                      <StatusBadge status={farmer.documentStatus} />
-                    </td>
+                      </td>
+                      <td>
+                        <span style={{ fontWeight: 600 }}>{formatINR(farmer.annualIncome)}</span>
+                        {farmer.alliedIncome > 0 && (
+                          <span style={{ fontSize: '0.7rem', color: '#15803d', display: 'block' }}>
+                            +{formatINR(farmer.alliedIncome)} allied
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <StatusBadge status={farmer.documentStatus} />
+                      </td>
                     <td>
                       <span style={{ fontSize: '0.8125rem', color: '#475569' }}>{farmer.assignedBranch}</span>
                     </td>
@@ -303,7 +326,8 @@ export default function Farmers({
                       </div>
                     </td>
                   </tr>
-                ))
+                );
+              })
               )}
             </tbody>
           </table>

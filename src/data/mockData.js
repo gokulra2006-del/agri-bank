@@ -650,6 +650,17 @@ export const GOV_SCHEMES = [
     benefits: 'Funding for cold rooms, warehouses, grading units, pack houses and solar dryers',
     documentsNeeded: 'Project DPR, Land lease/ownership proof, Business PAN, Quotation invoices',
     claimProcess: 'Apply online through AIF portal with bank loan sanction letter'
+  },
+  {
+    id: 'SCH-05',
+    title: 'Pradhan Mantri Krishi Sinchayee Yojana (PMKSY) - Per Drop More Crop',
+    category: 'Irrigation & Water Security',
+    coverage: 'Up to 55% - 70% capital subsidy on Drip and Sprinkler irrigation systems',
+    premiumShare: 'Subsidized by Central & State Ministry of Agriculture',
+    eligibility: 'All farmers, with preferential priority to small/marginal and rainfed cultivators',
+    benefits: 'Conserves 40% water, increases fertilizer use efficiency, protects against rainfall drought',
+    documentsNeeded: 'Water Source Certificate, Electricity/Borewell bill, Land RTC, Soil Testing Report',
+    claimProcess: 'Online application via state horticulture portal; direct vendor installation verification'
   }
 ];
 

@@ -12,9 +12,9 @@ import {
 } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { formatINR } from '../data/mockStore';
+import { formatINR, getConsentRecords } from '../data/mockStore';
 
-export default function Repayments({ repayments = [], onUpdateRepayment }) {
+export default function Repayments({ repayments = [], onUpdateRepayment, farmers = [] }) {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentModalRep, setPaymentModalRep] = useState(null);
@@ -190,16 +190,23 @@ export default function Repayments({ repayments = [], onUpdateRepayment }) {
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                        {rep.status !== 'Paid' && (
-                          <button
-                            className="btn btn-secondary btn-sm"
-                            onClick={() => handleSendReminder(rep)}
-                            title="Send SMS Payment Reminder"
-                          >
-                            <Send size={13} />
-                            {rep.smsReminderSent ? 'Resend SMS' : 'Send SMS'}
-                          </button>
-                        )}
+                        {rep.status !== 'Paid' && (() => {
+                          const consentRecords = getConsentRecords();
+                          const targetFarmer = (farmers || []).find(f => f.name === rep.farmerName || f.id === rep.farmerId);
+                          const isWithdrawn = targetFarmer && consentRecords[targetFarmer.id] && consentRecords[targetFarmer.id].smsReminders === false;
+                          return (
+                            <button
+                              className="btn btn-secondary btn-sm"
+                              disabled={isWithdrawn}
+                              onClick={() => !isWithdrawn && handleSendReminder(rep)}
+                              style={isWithdrawn ? { opacity: 0.5, cursor: 'not-allowed', backgroundColor: '#f1f5f9', color: '#94a3b8' } : {}}
+                              title={isWithdrawn ? 'SMS consent withdrawn by borrower in Privacy Center' : 'Send SMS Payment Reminder'}
+                            >
+                              <Send size={13} />
+                              {isWithdrawn ? 'Consent Withdrawn' : rep.smsReminderSent ? 'Resend SMS' : 'Send SMS'}
+                            </button>
+                          );
+                        })()}
                         {rep.status !== 'Paid' && (
                           <button
                             className="btn btn-primary btn-sm"

@@ -58,6 +58,13 @@ export default function Documents({ documents = [], farmers = [], onUpdateDocume
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* Digital Document Wallet Banner */}
+      <div style={{ padding: '0.875rem 1rem', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.8125rem', color: '#166534' }}>
+        <CheckCircle2 size={18} color="#15803d" />
+        <div>
+          <strong>Digital Farmer Document Wallet:</strong> Simulated wallet metadata view. No actual files or PII are stored on external servers. Access is restricted under farmer consent.
+        </div>
+      </div>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>

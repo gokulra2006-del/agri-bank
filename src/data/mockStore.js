@@ -33,14 +33,16 @@ const STORAGE_KEYS = {
   SETTINGS: 'agrisahay_settings',
   AUDIT_LOGS: 'agrisahay_audit_logs',
   ASSISTANCE_TRACKER: 'agrisahay_assistance_tracker',
-  VILLAGE_HEATMAPS: 'agrisahay_village_heatmaps'
+  VILLAGE_HEATMAPS: 'agrisahay_village_heatmaps',
+  CONSENT_RECORDS: 'agrisahay_consent_records'
 };
 
-const CURRENT_VERSION = '2.2';
+const CURRENT_VERSION = '3.0';
 
 // Safe storage initialization & migration
 const checkStorageMigration = () => {
   try {
+    if (typeof localStorage === 'undefined') return;
     const version = localStorage.getItem(STORAGE_KEYS.VERSION);
     if (!version || version !== CURRENT_VERSION) {
       localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_VERSION);
@@ -101,6 +103,9 @@ export const saveAssistanceTracker = (list) => setStorageItem(STORAGE_KEYS.ASSIS
 
 export const getVillageHeatmaps = () => getStorageItem(STORAGE_KEYS.VILLAGE_HEATMAPS, INITIAL_VILLAGE_HEATMAPS);
 export const saveVillageHeatmaps = (maps) => setStorageItem(STORAGE_KEYS.VILLAGE_HEATMAPS, maps);
+
+export const getConsentRecords = () => getStorageItem(STORAGE_KEYS.CONSENT_RECORDS, {});
+export const saveConsentRecords = (records) => setStorageItem(STORAGE_KEYS.CONSENT_RECORDS, records);
 
 export const getClimateScenarios = () => INITIAL_CLIMATE_SCENARIOS;
 

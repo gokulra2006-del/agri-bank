@@ -12,13 +12,16 @@ import {
   Send,
   X,
   Search,
-  Check
+  Check,
+  Sparkles,
+  Wand2
 } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import OfflineSyncBadge from '../components/OfflineSyncBadge';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { logAudit } from '../utils/audit';
 import { saveOfflineQueue, getOfflineQueue } from '../data/mockStore';
+import { extractSmartVisitNotes } from '../utils/climatePlatformUtils';
 
 export default function FieldOfficerMode({
   visits = [],
@@ -51,6 +54,20 @@ export default function FieldOfficerMode({
   const [rtcVerified, setRtcVerified] = useState(true);
   const [cropPhotoTaken, setCropPhotoTaken] = useState(true);
   const [neighborInquiryDone, setNeighborInquiryDone] = useState(true);
+
+  // Smart Notes Assistant (rule-based demo)
+  const [smartNotesLang, setSmartNotesLang] = useState('en');
+  const [smartExtractionResult, setSmartExtractionResult] = useState(null);
+
+  const handleRunSmartAssistant = () => {
+    if (!visitNotesInput.trim()) return;
+    const extracted = extractSmartVisitNotes(visitNotesInput, smartNotesLang);
+    setSmartExtractionResult(extracted);
+    if (extracted) {
+      if (extracted.cropCondition) setCropConditionInput(extracted.cropCondition);
+      if (extracted.irrigationCondition) setIrrigationInput(extracted.irrigationCondition);
+    }
+  };
 
   const filteredVisits = visits.filter(v => {
     const matchSearch =
@@ -378,18 +395,82 @@ export default function FieldOfficerMode({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>
-                  Detailed Field Officer Scrutiny Note *
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>
+                    Detailed Field Officer Scrutiny Note *
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <select
+                      value={smartNotesLang}
+                      onChange={(e) => setSmartNotesLang(e.target.value)}
+                      style={{ fontSize: '0.75rem', padding: '0.15rem 0.35rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="en">English</option>
+                      <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                      <option value="hi">Hindi (हिन्दी)</option>
+                      <option value="ta">Tamil (தமிழ்)</option>
+                      <option value="te">Telugu (తెలుగు)</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={handleRunSmartAssistant}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        backgroundColor: '#ecfdf5',
+                        color: '#065f46',
+                        border: '1px solid #a7f3d0',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0.5rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Wand2 size={12} />
+                      Smart Notes Assistant (rule-based demo)
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   rows={3}
                   required
-                  placeholder="Record observations regarding harvest dates, mandi tie-ups, pest treatments, or debt..."
+                  placeholder="Record observations regarding harvest dates, mandi tie-ups, pest treatments, or missing documents..."
                   value={visitNotesInput}
                   onChange={(e) => setVisitNotesInput(e.target.value)}
                   style={{ width: '100%' }}
                 />
               </div>
+
+              {/* Smart Assistant Output Card */}
+              {smartExtractionResult && (
+                <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '0.75rem', fontSize: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <strong style={{ color: '#166534', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Sparkles size={13} />
+                      Smart Notes Assistant (rule-based demo) Extracted:
+                    </strong>
+                    <span style={{ backgroundColor: smartExtractionResult.cropRisk === 'High' ? '#fee2e2' : '#dcfce7', color: smartExtractionResult.cropRisk === 'High' ? '#991b1b' : '#166534', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 700 }}>
+                      {smartExtractionResult.cropRisk} Risk Flag
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', color: '#14532d' }}>
+                    <div>• <strong>Crop Condition:</strong> {smartExtractionResult.cropCondition}</div>
+                    <div>• <strong>Irrigation:</strong> {smartExtractionResult.irrigationCondition}</div>
+                    <div>• <strong>Pest / Disease:</strong> {smartExtractionResult.pestDetails}</div>
+                    <div>• <strong>Suggested Follow-up:</strong> {smartExtractionResult.suggestedFollowUpDate}</div>
+                  </div>
+                  {smartExtractionResult.missingDocs.length > 0 && (
+                    <div style={{ marginTop: '0.35rem', color: '#b91c1c' }}>
+                      ⚠️ <strong>Missing Documents Flagged:</strong> {smartExtractionResult.missingDocs.join(', ')}
+                    </div>
+                  )}
+                  <div style={{ marginTop: '0.35rem', color: '#166534', fontStyle: 'italic' }}>
+                    Suggested Action: {smartExtractionResult.suggestedAction}
+                  </div>
+                </div>
+              )}
 
               <div style={{ backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8125rem' }}>
                 <span style={{ fontWeight: 600, color: '#0f172a' }}>Field Audit Checklist:</span>
