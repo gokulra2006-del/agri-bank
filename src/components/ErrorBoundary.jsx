@@ -74,13 +74,17 @@ export default class ErrorBoundary extends React.Component {
             </p>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary" onClick={this.handleReload}>
+              <button 
+                className="btn btn-primary" 
+                onClick={this.handleReset}
+                style={{ backgroundColor: '#047857', borderColor: '#047857' }}
+              >
+                <RotateCcw size={15} />
+                Auto-Fix & Reset State
+              </button>
+              <button className="btn btn-secondary" onClick={this.handleReload}>
                 <RefreshCw size={15} />
                 Reload Page
-              </button>
-              <button className="btn btn-secondary" onClick={this.handleReset}>
-                <RotateCcw size={15} />
-                Reset Demo Data
               </button>
             </div>
 

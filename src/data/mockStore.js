@@ -52,7 +52,7 @@ const STORAGE_KEYS = {
   DATA_CORRECTION_REQUESTS: 'agrisahay_data_correction_requests'
 };
 
-const CURRENT_VERSION = '5.0';
+const CURRENT_VERSION = '6.0';
 
 // Safe storage initialization & migration
 const checkStorageMigration = () => {
@@ -60,6 +60,14 @@ const checkStorageMigration = () => {
     if (typeof localStorage === 'undefined') return;
     const version = localStorage.getItem(STORAGE_KEYS.VERSION);
     if (!version || version !== CURRENT_VERSION) {
+      // Clear legacy/incompatible storage from previous phases
+      try {
+        localStorage.clear();
+      } catch (clearErr) {
+        Object.values(STORAGE_KEYS).forEach(k => {
+          try { localStorage.removeItem(k); } catch (e) {}
+        });
+      }
       localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_VERSION);
     }
   } catch (e) {
@@ -181,14 +189,19 @@ export const saveTranslationReviews = (r) => setStorageItem(STORAGE_KEYS.TRANSLA
 export const getResilienceOverrides = () => getStorageItem(STORAGE_KEYS.RESILIENCE_OVERRIDES, {});
 export const saveResilienceOverrides = (o) => setStorageItem(STORAGE_KEYS.RESILIENCE_OVERRIDES, o);
 
-export const getAccessibilitySettings = () => getStorageItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, {
-  textSize: 'normal', // 'normal', 'large', 'extra-large'
-  highContrast: false,
-  reducedMotion: false,
-  lowBandwidthMode: false,
-  farmerHelpMode: false,
-  voiceSpeechEnabled: true
-});
+export const getAccessibilitySettings = () => {
+  const defaults = {
+    textSize: 'normal',
+    fontSize: 'normal',
+    highContrast: false,
+    reducedMotion: false,
+    lowBandwidthMode: false,
+    farmerHelpMode: false,
+    voiceSpeechEnabled: true
+  };
+  const val = getStorageItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, defaults);
+  return { ...defaults, ...(val && typeof val === 'object' ? val : {}) };
+};
 export const saveAccessibilitySettings = (s) => setStorageItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, s);
 
 export const getDataAccessLog = () => getStorageItem(STORAGE_KEYS.DATA_ACCESS_LOG, [
@@ -229,21 +242,28 @@ export const saveDataCorrections = (corrections) => setStorageItem(STORAGE_KEYS.
 export const getClimateScenarios = () => INITIAL_CLIMATE_SCENARIOS;
 export const getWeatherRisks = () => INITIAL_WEATHER_RISKS;
 
-export const getSettings = () => getStorageItem(STORAGE_KEYS.SETTINGS, {
-  language: 'en',
-  demoRole: 'manager',
-  isOfflineMode: false,
-  activeBranchId: 'ALL',
-  officerName: 'Gokul Sharma',
-  officerRole: 'Agri Credit Processing Unit',
-  emailAlerts: true,
-  smsReminders: true
-});
+export const getSettings = () => {
+  const defaults = {
+    language: 'en',
+    demoRole: 'manager',
+    isOfflineMode: false,
+    activeBranchId: 'ALL',
+    officerName: 'Gokul Sharma',
+    officerRole: 'Agri Credit Processing Unit',
+    emailAlerts: true,
+    smsReminders: true
+  };
+  const val = getStorageItem(STORAGE_KEYS.SETTINGS, defaults);
+  return { ...defaults, ...(val && typeof val === 'object' ? val : {}) };
+};
 export const saveSettings = (settings) => setStorageItem(STORAGE_KEYS.SETTINGS, settings);
 
 // Helper for resetting demo state
 export const resetDemoData = () => {
   if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.clear();
+    } catch (clearErr) {}
     Object.values(STORAGE_KEYS).forEach(k => {
       try {
         localStorage.removeItem(k);

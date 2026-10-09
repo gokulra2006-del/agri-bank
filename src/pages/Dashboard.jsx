@@ -27,18 +27,22 @@ export default function Dashboard({
   onOpenNewLoan
 }) {
   const { t } = useTranslation();
-  const totalFarmers = farmers.length;
-  const pendingLoans = loans.filter(l => l.status === 'Submitted' || l.status === 'Under Review').length;
-  const approvedLoans = loans.filter(l => l.status === 'Approved').length;
-  const activeLoans = loans.filter(l => l.status === 'Disbursed').length;
+  const safeFarmers = Array.isArray(farmers) ? farmers : [];
+  const safeLoans = Array.isArray(loans) ? loans : [];
+  const safeRepayments = Array.isArray(repayments) ? repayments : [];
 
-  const totalDisbursedAmt = loans
-    .filter(l => l.status === 'Disbursed')
-    .reduce((sum, l) => sum + (l.sanctionedAmount || 0), 0);
+  const totalFarmers = safeFarmers.length;
+  const pendingLoans = safeLoans.filter(l => l && (l.status === 'Submitted' || l.status === 'Under Review')).length;
+  const approvedLoans = safeLoans.filter(l => l && l.status === 'Approved').length;
+  const activeLoans = safeLoans.filter(l => l && l.status === 'Disbursed').length;
+
+  const totalDisbursedAmt = safeLoans
+    .filter(l => l && l.status === 'Disbursed')
+    .reduce((sum, l) => sum + (Number(l?.sanctionedAmount) || 0), 0);
 
   // Collection calculation
-  const totalDueAmt = repayments.reduce((sum, r) => sum + r.amountDue, 0);
-  const totalPaidAmt = repayments.reduce((sum, r) => sum + r.amountPaid, 0);
+  const totalDueAmt = safeRepayments.reduce((sum, r) => sum + (Number(r?.amountDue) || 0), 0);
+  const totalPaidAmt = safeRepayments.reduce((sum, r) => sum + (Number(r?.amountPaid) || 0), 0);
   const collectionRate = totalDueAmt > 0 ? Math.round((totalPaidAmt / totalDueAmt) * 100) : 0;
 
   // Monthly trends mock data
@@ -52,13 +56,15 @@ export default function Dashboard({
   ];
 
   // Status map
-  const statusCounts = loans.reduce((acc, curr) => {
-    acc[curr.status] = (acc[curr.status] || 0) + 1;
+  const statusCounts = safeLoans.reduce((acc, curr) => {
+    if (curr && curr.status) {
+      acc[curr.status] = (acc[curr.status] || 0) + 1;
+    }
     return acc;
   }, {});
 
-  const recentLoans = [...loans].slice(-4).reverse();
-  const upcomingRepayments = repayments.filter(r => r.status === 'Due Soon' || r.status === 'Overdue');
+  const recentLoans = [...safeLoans].slice(-4).reverse();
+  const upcomingRepayments = safeRepayments.filter(r => r && (r.status === 'Due Soon' || r.status === 'Overdue'));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

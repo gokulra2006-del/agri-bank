@@ -179,13 +179,28 @@ export const ROLE_PERMISSIONS = {
   }
 };
 
+export const normalizeRoleKey = (role) => {
+  if (!role) return ROLE_KEYS.MANAGER;
+  const str = String(role).trim().toLowerCase();
+  if (str.includes('officer') || str === 'officer') return ROLE_KEYS.OFFICER;
+  if (str.includes('admin') || str === 'admin') return ROLE_KEYS.ADMIN;
+  if (str.includes('researcher') || str === 'researcher') return ROLE_KEYS.RESEARCHER;
+  if (str.includes('manager') || str === 'manager') return ROLE_KEYS.MANAGER;
+  return ROLE_KEYS.MANAGER;
+};
+
 export const hasRouteAccess = (roleKey, routeId) => {
-  const perms = ROLE_PERMISSIONS[roleKey] || ROLE_PERMISSIONS[ROLE_KEYS.MANAGER];
-  return perms.allowedRoutes.includes(routeId);
+  if (!routeId) return true;
+  const normalizedKey = normalizeRoleKey(roleKey);
+  const perms = ROLE_PERMISSIONS[normalizedKey] || ROLE_PERMISSIONS[ROLE_KEYS.MANAGER];
+  return Array.isArray(perms?.allowedRoutes) ? perms.allowedRoutes.includes(routeId) : true;
 };
 
 export const canPerformAction = (roleKey, action) => {
-  const perms = ROLE_PERMISSIONS[roleKey] || ROLE_PERMISSIONS[ROLE_KEYS.MANAGER];
-  return Boolean(perms[action]);
+  if (!action) return false;
+  const normalizedKey = normalizeRoleKey(roleKey);
+  const perms = ROLE_PERMISSIONS[normalizedKey] || ROLE_PERMISSIONS[ROLE_KEYS.MANAGER];
+  return Boolean(perms?.[action]);
 };
+
 

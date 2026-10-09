@@ -74,6 +74,8 @@ import {
   saveAssistanceTracker,
   getVillageHeatmaps,
   saveVillageHeatmaps,
+  getAccessibilitySettings,
+  saveAccessibilitySettings,
   loadStore,
   updateStore,
   STORES
@@ -86,23 +88,46 @@ export default function App() {
   const [showA11yModal, setShowA11yModal] = useState(false);
 
   // App Settings, Role, Language, and Offline states
-  const [settings, setSettingsState] = useState(getSettings());
-  const currentRole = settings.demoRole || 'manager';
-  const currentLang = settings.language || 'en';
-  const isOfflineMode = Boolean(settings.isOfflineMode);
+  const [settings, setSettingsState] = useState(() => getSettings() || { demoRole: 'manager', language: 'en' });
+  const currentRole = settings?.demoRole || 'manager';
+  const currentLang = settings?.language || 'en';
+  const isOfflineMode = Boolean(settings?.isOfflineMode);
 
   // Accessibility Settings
-  const [a11ySettings, setA11ySettings] = useState(() => loadStore(STORES.ACCESSIBILITY_SETTINGS) || {
-    fontSize: 'normal',
-    highContrast: false,
-    lowBandwidth: false,
-    farmerHelpMode: false,
-    speechRate: 0.9
+  const [a11ySettings, setA11ySettings] = useState(() => {
+    try {
+      const s = getAccessibilitySettings ? getAccessibilitySettings() : {};
+      return {
+        textSize: s?.textSize || s?.fontSize || 'normal',
+        fontSize: s?.fontSize || s?.textSize || 'normal',
+        highContrast: Boolean(s?.highContrast),
+        reducedMotion: Boolean(s?.reducedMotion),
+        lowBandwidthMode: Boolean(s?.lowBandwidthMode),
+        farmerHelpMode: Boolean(s?.farmerHelpMode),
+        voiceSpeechEnabled: Boolean(s?.voiceSpeechEnabled ?? true),
+        ...s
+      };
+    } catch (e) {
+      return {
+        textSize: 'normal',
+        fontSize: 'normal',
+        highContrast: false,
+        reducedMotion: false,
+        lowBandwidthMode: false,
+        farmerHelpMode: false,
+        voiceSpeechEnabled: true
+      };
+    }
   });
 
   const handleUpdateA11ySettings = (newSettings) => {
-    setA11ySettings(newSettings);
-    updateStore(STORES.ACCESSIBILITY_SETTINGS, newSettings);
+    const merged = { ...a11ySettings, ...newSettings };
+    setA11ySettings(merged);
+    try {
+      saveAccessibilitySettings(merged);
+    } catch (e) {
+      updateStore(STORES.ACCESSIBILITY_SETTINGS, merged);
+    }
   };
 
   // Deep selection IDs
@@ -110,16 +135,16 @@ export default function App() {
   const [selectedLoanId, setSelectedLoanId] = useState(null);
 
   // Application Data States
-  const [farmers, setFarmersState] = useState(getFarmers());
-  const [loans, setLoansState] = useState(getLoans());
-  const [repayments, setRepaymentsState] = useState(getRepayments());
-  const [documents, setDocumentsState] = useState(getDocuments());
-  const [notifications, setNotificationsState] = useState(getNotifications());
-  const [visits, setVisitsState] = useState(getFieldVisits());
-  const [communications, setCommunicationsState] = useState(getCommunications());
-  const [assistanceList, setAssistanceListState] = useState(getAssistanceTracker());
-  const [villageHeatmaps, setVillageHeatmapsState] = useState(getVillageHeatmaps());
-  const branches = getBranches();
+  const [farmers, setFarmersState] = useState(() => getFarmers() || []);
+  const [loans, setLoansState] = useState(() => getLoans() || []);
+  const [repayments, setRepaymentsState] = useState(() => getRepayments() || []);
+  const [documents, setDocumentsState] = useState(() => getDocuments() || []);
+  const [notifications, setNotificationsState] = useState(() => getNotifications() || []);
+  const [visits, setVisitsState] = useState(() => getFieldVisits() || []);
+  const [communications, setCommunicationsState] = useState(() => getCommunications() || []);
+  const [assistanceList, setAssistanceListState] = useState(() => getAssistanceTracker() || []);
+  const [villageHeatmaps, setVillageHeatmapsState] = useState(() => getVillageHeatmaps() || []);
+  const branches = getBranches() || [];
 
   // Role and Language change handlers
   const handleRoleChange = (newRole) => {
@@ -417,16 +442,17 @@ export default function App() {
     setCurrentPage('loan-detail');
   };
 
-  const fontMultiplier = a11ySettings.fontSize === 'extra-large' ? 1.25 : a11ySettings.fontSize === 'large' ? 1.12 : 1;
+  const textSizeVal = a11ySettings?.textSize || a11ySettings?.fontSize || 'normal';
+  const fontMultiplier = textSizeVal === 'extra-large' ? 1.25 : textSizeVal === 'large' ? 1.12 : 1;
 
   return (
     <div
       style={{
         display: 'flex',
         minHeight: '100vh',
-        backgroundColor: a11ySettings.highContrast ? '#0f172a' : '#f8fafc',
+        backgroundColor: a11ySettings?.highContrast ? '#0f172a' : '#f8fafc',
         fontSize: fontMultiplier !== 1 ? `${fontMultiplier * 100}%` : undefined,
-        filter: a11ySettings.highContrast ? 'contrast(115%)' : undefined
+        filter: a11ySettings?.highContrast ? 'contrast(115%)' : undefined
       }}
     >
       {/* Sidebar */}
