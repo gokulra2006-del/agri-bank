@@ -21,17 +21,20 @@ export default function Repayments({ repayments = [], onUpdateRepayment, farmers
   const [paymentAmountInput, setPaymentAmountInput] = useState('');
   const [reminderToast, setReminderToast] = useState(null);
 
-  const filtered = repayments.filter(r => {
+  const safeRepayments = Array.isArray(repayments) ? repayments : [];
+  const filtered = safeRepayments.filter(r => {
+    if (!r) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      r.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.loanId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.id.toLowerCase().includes(searchTerm.toLowerCase());
+      (r.farmerName || '').toLowerCase().includes(term) ||
+      (r.loanId || '').toLowerCase().includes(term) ||
+      (r.id || '').toLowerCase().includes(term);
     const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
     return matchSearch && matchStatus;
   });
 
-  const totalDue = repayments.reduce((s, r) => s + r.amountDue, 0);
-  const totalCollected = repayments.reduce((s, r) => s + r.amountPaid, 0);
+  const totalDue = safeRepayments.reduce((s, r) => s + (Number(r?.amountDue) || 0), 0);
+  const totalCollected = safeRepayments.reduce((s, r) => s + (Number(r?.amountPaid) || 0), 0);
   const totalPending = totalDue - totalCollected;
 
   const handleSendReminder = (rep) => {

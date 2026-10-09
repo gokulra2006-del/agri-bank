@@ -7,9 +7,11 @@ export default function CropCalendar() {
   const [searchTerm, setSearchTerm] = useState('');
   const [seasonFilter, setSeasonFilter] = useState('ALL');
 
-  const filteredCrops = CROP_CALENDAR.filter(c => {
-    const matchSearch = c.cropName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchSeason = seasonFilter === 'ALL' || c.season.toLowerCase().includes(seasonFilter.toLowerCase());
+  const filteredCrops = (CROP_CALENDAR || []).filter(c => {
+    if (!c) return false;
+    const term = (searchTerm || '').toLowerCase();
+    const matchSearch = (c.cropName || '').toLowerCase().includes(term);
+    const matchSeason = seasonFilter === 'ALL' || (c.season || '').toLowerCase().includes(seasonFilter.toLowerCase());
     return matchSearch && matchSeason;
   });
 

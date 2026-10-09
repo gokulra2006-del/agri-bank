@@ -98,7 +98,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
         { id: 'admin-ops', labelKey: 'navigation.adminOps', defaultLabel: 'Admin Operations', icon: Server },
         { id: 'reports', labelKey: 'navigation.reports', defaultLabel: 'Reports & Export', icon: BarChart3 },
         { id: 'audit-log', labelKey: 'navigation.auditLog', defaultLabel: 'Audit Trail', icon: History },
-        { id: 'helpDesk', labelKey: 'navigation.helpDesk', defaultLabel: 'Farmer Help Desk', icon: LifeBuoy },
+        { id: 'help-desk', labelKey: 'navigation.helpDesk', defaultLabel: 'Farmer Help Desk', icon: LifeBuoy },
         { id: 'notifications', labelKey: 'navigation.notifications', defaultLabel: 'Notifications', icon: Bell },
         { id: 'settings', labelKey: 'navigation.settings', defaultLabel: 'Settings', icon: Settings },
         { id: 'language-preview', labelKey: 'navigation.languagePreview', defaultLabel: 'Language Preview & Coverage', icon: Sparkles }

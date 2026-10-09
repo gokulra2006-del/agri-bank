@@ -76,6 +76,8 @@ import {
   saveVillageHeatmaps,
   getAccessibilitySettings,
   saveAccessibilitySettings,
+  getSyncConflicts,
+  saveSyncConflicts,
   loadStore,
   updateStore,
   STORES
@@ -144,7 +146,13 @@ export default function App() {
   const [communications, setCommunicationsState] = useState(() => getCommunications() || []);
   const [assistanceList, setAssistanceListState] = useState(() => getAssistanceTracker() || []);
   const [villageHeatmaps, setVillageHeatmapsState] = useState(() => getVillageHeatmaps() || []);
+  const [conflicts, setConflictsState] = useState(() => getSyncConflicts() || []);
   const branches = getBranches() || [];
+
+  const handleUpdateConflicts = (updatedConflicts) => {
+    setConflictsState(updatedConflicts);
+    saveSyncConflicts(updatedConflicts);
+  };
 
   // Role and Language change handlers
   const handleRoleChange = (newRole) => {
@@ -746,12 +754,15 @@ export default function App() {
 
               {currentPage === 'conflict-center' && (
                 <ConflictCenterPage
+                  conflicts={conflicts}
+                  onUpdateConflicts={handleUpdateConflicts}
                   farmers={farmers}
                   loans={loans}
                   onUpdateFarmer={handleUpdateFarmer}
                   onUpdateLoan={handleUpdateLoanStatus}
                   onLogAudit={logAudit}
                   currentRole={currentRole}
+                  currentLang={currentLang}
                 />
               )}
 

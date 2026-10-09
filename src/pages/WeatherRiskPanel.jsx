@@ -7,16 +7,19 @@ export default function WeatherRiskPanel() {
   const [districtFilter, setDistrictFilter] = useState('ALL');
   const weatherRisks = getWeatherRisks();
 
-  const filtered = weatherRisks.filter(item => {
+  const safeRisks = Array.isArray(weatherRisks) ? weatherRisks : [];
+  const filtered = safeRisks.filter(item => {
+    if (!item) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      item.crop.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.district.toLowerCase().includes(searchTerm.toLowerCase());
+      (item.crop || '').toLowerCase().includes(term) ||
+      (item.reason || '').toLowerCase().includes(term) ||
+      (item.district || '').toLowerCase().includes(term);
     const matchDistrict = districtFilter === 'ALL' || item.district === districtFilter;
     return matchSearch && matchDistrict;
   });
 
-  const districts = Array.from(new Set(weatherRisks.map(w => w.district)));
+  const districts = Array.from(new Set(safeRisks.map(w => w?.district).filter(Boolean)));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

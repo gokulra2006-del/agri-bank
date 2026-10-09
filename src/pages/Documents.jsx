@@ -15,14 +15,17 @@ export default function Documents({ documents = [], farmers = [], onUpdateDocume
     fileName: 'Land_RTC_Record.pdf'
   });
 
-  const filtered = documents.filter(d => {
-    const farmer = farmers.find(f => f.id === d.farmerId);
-    const farmerName = farmer ? farmer.name.toLowerCase() : '';
+  const safeDocs = Array.isArray(documents) ? documents : [];
+  const filtered = safeDocs.filter(d => {
+    if (!d) return false;
+    const farmer = (farmers || []).find(f => f && f.id === d.farmerId);
+    const farmerName = farmer ? (farmer.name || '').toLowerCase() : '';
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      (d.fileName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmerName.includes(searchTerm.toLowerCase());
+      (d.fileName || '').toLowerCase().includes(term) ||
+      (d.type || '').toLowerCase().includes(term) ||
+      (d.id || '').toLowerCase().includes(term) ||
+      farmerName.includes(term);
     const matchStatus = statusFilter === 'ALL' || d.status === statusFilter;
     return matchSearch && matchStatus;
   });

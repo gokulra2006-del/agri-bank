@@ -12,15 +12,18 @@ export default function SchemesInsurance({ farmers = [] }) {
   const selectedFarmer = farmers.find(f => f.id === selectedFarmerId) || farmers[0];
   const matchedSchemes = selectedFarmer ? matchFarmerSchemes(selectedFarmer) : [];
 
-  const filtered = GOV_SCHEMES.filter(s => {
+  const safeSchemes = Array.isArray(GOV_SCHEMES) ? GOV_SCHEMES : [];
+  const filtered = safeSchemes.filter(s => {
+    if (!s) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.benefits.toLowerCase().includes(searchTerm.toLowerCase());
+      (s.title || '').toLowerCase().includes(term) ||
+      (s.benefits || '').toLowerCase().includes(term);
     const matchCat = categoryFilter === 'ALL' || s.category === categoryFilter;
     return matchSearch && matchCat;
   });
 
-  const categories = Array.from(new Set(GOV_SCHEMES.map(s => s.category)));
+  const categories = Array.from(new Set(safeSchemes.map(s => s?.category).filter(Boolean)));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

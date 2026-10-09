@@ -12,35 +12,42 @@ export default function Reports({ loans = [], farmers = [], repayments = [], bra
   // Dynamic filter lists
   const crops = Array.from(new Set(farmers.map(f => f.primaryCrop)));
 
+  const safeLoans = Array.isArray(loans) ? loans : [];
+  const safeFarmers = Array.isArray(farmers) ? farmers : [];
+  const safeRepayments = Array.isArray(repayments) ? repayments : [];
+
   // Filtered dataset
-  const filteredLoans = loans.filter(l => {
+  const filteredLoans = safeLoans.filter(l => {
+    if (!l) return false;
     const matchBranch = branchFilter === 'ALL' || l.branchId === branchFilter;
-    const matchCrop = cropFilter === 'ALL' || l.crop.toLowerCase().includes(cropFilter.toLowerCase());
+    const matchCrop = cropFilter === 'ALL' || (l.crop || '').toLowerCase().includes(cropFilter.toLowerCase());
     const matchStatus = statusFilter === 'ALL' || l.status === statusFilter;
     return matchBranch && matchCrop && matchStatus;
   });
 
-  const filteredFarmers = farmers.filter(f => {
+  const filteredFarmers = safeFarmers.filter(f => {
+    if (!f) return false;
     const matchBranch = branchFilter === 'ALL' || f.assignedBranch === branchFilter;
     const matchCrop = cropFilter === 'ALL' || f.primaryCrop === cropFilter;
     const matchStatus = statusFilter === 'ALL' || f.documentStatus === statusFilter;
     return matchBranch && matchCrop && matchStatus;
   });
 
-  const filteredRepayments = repayments.filter(r => {
+  const filteredRepayments = safeRepayments.filter(r => {
+    if (!r) return false;
     const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
     return matchStatus;
   });
 
   // Summary Metrics
   const totalApps = filteredLoans.length;
-  const approvedCount = filteredLoans.filter(l => l.status === 'Approved' || l.status === 'Disbursed').length;
+  const approvedCount = filteredLoans.filter(l => l && (l.status === 'Approved' || l.status === 'Disbursed')).length;
   const disbursedAmt = filteredLoans
-    .filter(l => l.status === 'Disbursed')
-    .reduce((sum, l) => sum + (l.sanctionedAmount || l.appliedAmount), 0);
-  const overdueCount = repayments.filter(r => r.status === 'Overdue').length;
-  const totalDue = repayments.reduce((s, r) => s + r.amountDue, 0);
-  const totalPaid = repayments.reduce((s, r) => s + r.amountPaid, 0);
+    .filter(l => l && l.status === 'Disbursed')
+    .reduce((sum, l) => sum + (Number(l.sanctionedAmount) || Number(l.appliedAmount) || 0), 0);
+  const overdueCount = safeRepayments.filter(r => r && r.status === 'Overdue').length;
+  const totalDue = safeRepayments.reduce((s, r) => s + (Number(r?.amountDue) || 0), 0);
+  const totalPaid = safeRepayments.reduce((s, r) => s + (Number(r?.amountPaid) || 0), 0);
   const collectionRate = totalDue > 0 ? Math.round((totalPaid / totalDue) * 100) : 0;
 
   const handleExportCSV = () => {

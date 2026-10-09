@@ -71,11 +71,14 @@ export default function FieldOfficerMode({
     }
   };
 
-  const filteredVisits = visits.filter(v => {
+  const safeVisits = Array.isArray(visits) ? visits : [];
+  const filteredVisits = safeVisits.filter(v => {
+    if (!v) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      v.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.village.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.purpose.toLowerCase().includes(searchTerm.toLowerCase());
+      (v.farmerName || '').toLowerCase().includes(term) ||
+      (v.village || '').toLowerCase().includes(term) ||
+      (v.purpose || '').toLowerCase().includes(term);
     const matchStatus = statusFilter === 'ALL' || v.status === statusFilter;
     return matchSearch && matchStatus;
   });

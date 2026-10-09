@@ -27,12 +27,14 @@ export default function AuditLogPage() {
     setVerificationResult(res);
   };
 
-  const filtered = auditLogs.filter(log => {
+  const filtered = (auditLogs || []).filter(log => {
+    if (!log) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.entityId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.userRole.toLowerCase().includes(searchTerm.toLowerCase());
+      (log.action || '').toLowerCase().includes(term) ||
+      (log.entityId || '').toLowerCase().includes(term) ||
+      (log.notes || '').toLowerCase().includes(term) ||
+      (log.userRole || '').toLowerCase().includes(term);
     const matchRole = roleFilter === 'ALL' || log.userRole === roleFilter;
     const matchAction = actionFilter === 'ALL' || log.action === actionFilter;
     return matchSearch && matchRole && matchAction;

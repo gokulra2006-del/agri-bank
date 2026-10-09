@@ -43,10 +43,10 @@ export default function FarmerProfile({
     );
   }
 
-  const farmerLoans = loans.filter(l => l.farmerId === farmer.id);
-  const farmerRepayments = repayments.filter(r => r.farmerName.toLowerCase() === farmer.name.toLowerCase() || farmerLoans.some(l => l.id === r.loanId));
-  const farmerDocs = documents.filter(d => d.farmerId === farmer.id);
-  const farmerComms = communications.filter(c => c.farmerId === farmer.id);
+  const farmerLoans = (loans || []).filter(l => l && l.farmerId === farmer.id);
+  const farmerRepayments = (repayments || []).filter(r => r && (((r.farmerName || '').toLowerCase() === (farmer.name || '').toLowerCase()) || farmerLoans.some(l => l && l.id === r.loanId)));
+  const farmerDocs = (documents || []).filter(d => d && d.farmerId === farmer.id);
+  const farmerComms = (communications || []).filter(c => c && c.farmerId === farmer.id);
 
   const [activeTab, setActiveTab] = useState('overview'); // overview, loans, repayments, docs, timeline
   const [newCommMsg, setNewCommMsg] = useState('');

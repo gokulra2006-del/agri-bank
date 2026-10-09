@@ -23,10 +23,15 @@ export default function ImpactDashboardPage({
   const [downloadNotice, setDownloadNotice] = useState(null);
 
   // Computations
-  const totalFarmers = farmers.length;
-  const completedVisits = visits.filter(v => v.status === 'Completed').length;
-  const totalLoans = loans.length;
-  const harvestAlignedLoans = loans.filter(l => l.repaymentScheduleType && l.repaymentScheduleType.toLowerCase().includes('harvest')).length;
+  const safeFarmers = Array.isArray(farmers) ? farmers : [];
+  const safeLoans = Array.isArray(loans) ? loans : [];
+  const safeRepayments = Array.isArray(repayments) ? repayments : [];
+  const safeVisits = Array.isArray(visits) ? visits : [];
+
+  const totalFarmers = safeFarmers.length;
+  const completedVisits = safeVisits.filter(v => v && v.status === 'Completed').length;
+  const totalLoans = safeLoans.length;
+  const harvestAlignedLoans = safeLoans.filter(l => l && l.repaymentScheduleType && l.repaymentScheduleType.toLowerCase().includes('harvest')).length;
   const harvestAlignedPercent = totalLoans > 0 ? Math.round((harvestAlignedLoans / totalLoans) * 100) : 85;
 
   // Turnaround Time (TAT) metrics: Demo Baseline vs App
@@ -35,8 +40,8 @@ export default function ImpactDashboardPage({
   const tatReduction = Math.round(((baselineDays - appTATDays) / baselineDays) * 100);
 
   // Overdue Reduction
-  const overdueCount = repayments.filter(r => r.status === 'Overdue').length;
-  const totalRepayments = repayments.length;
+  const overdueCount = safeRepayments.filter(r => r && r.status === 'Overdue').length;
+  const totalRepayments = safeRepayments.length;
   const overdueRate = totalRepayments > 0 ? Math.round((overdueCount / totalRepayments) * 100) : 6;
 
   const handleExportCSV = () => {

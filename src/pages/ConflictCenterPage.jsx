@@ -21,7 +21,7 @@ import { t } from '../utils/i18n';
 
 export default function ConflictCenterPage({
   conflicts = [],
-  onUpdateConflicts,
+  onUpdateConflicts = () => {},
   currentRole = 'officer',
   currentLang = 'en'
 }) {

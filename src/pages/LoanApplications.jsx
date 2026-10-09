@@ -45,11 +45,14 @@ export default function LoanApplications({
 
   const statuses = ['Draft', 'Submitted', 'Under Review', 'Approved', 'Rejected', 'Disbursed'];
 
-  const filtered = loans.filter(l => {
+  const safeLoans = Array.isArray(loans) ? loans : [];
+  const filtered = safeLoans.filter(l => {
+    if (!l) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      l.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.crop.toLowerCase().includes(searchTerm.toLowerCase());
+      (l.id || '').toLowerCase().includes(term) ||
+      (l.farmerName || '').toLowerCase().includes(term) ||
+      (l.crop || '').toLowerCase().includes(term);
     const matchStatus = statusFilter === 'ALL' || l.status === statusFilter;
     return matchSearch && matchStatus;
   });

@@ -60,16 +60,19 @@ export default function Farmers({
     assignedBranch: 'BR-01'
   });
 
-  const crops = Array.from(new Set(farmers.map(f => f.primaryCrop)));
-  const districts = Array.from(new Set(farmers.map(f => f.district)));
+  const safeFarmers = Array.isArray(farmers) ? farmers : [];
+  const crops = Array.from(new Set(safeFarmers.map(f => f?.primaryCrop).filter(Boolean)));
+  const districts = Array.from(new Set(safeFarmers.map(f => f?.district).filter(Boolean)));
 
   // Filter & Search Logic
-  const filtered = farmers.filter(f => {
+  const filtered = safeFarmers.filter(f => {
+    if (!f) return false;
+    const term = (searchTerm || '').toLowerCase();
     const matchSearch =
-      f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      f.village.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      f.phone.includes(searchTerm) ||
-      f.id.toLowerCase().includes(searchTerm.toLowerCase());
+      (f.name || '').toLowerCase().includes(term) ||
+      (f.village || '').toLowerCase().includes(term) ||
+      (f.phone || '').includes(searchTerm || '') ||
+      (f.id || '').toLowerCase().includes(term);
     const matchCrop = selectedCrop === 'ALL' || f.primaryCrop === selectedCrop;
     const matchDistrict = selectedDistrict === 'ALL' || f.district === selectedDistrict;
     return matchSearch && matchCrop && matchDistrict;

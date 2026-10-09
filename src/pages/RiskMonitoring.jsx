@@ -27,14 +27,19 @@ export default function RiskMonitoring({
   const [filterCategory, setFilterCategory] = useState('ALL');
   const [stressFilter, setStressFilter] = useState('ALL');
 
+  const safeFarmers = Array.isArray(farmers) ? farmers : [];
+  const safeLoans = Array.isArray(loans) ? loans : [];
+  const safeRepayments = Array.isArray(repayments) ? repayments : [];
+  const safeDocs = Array.isArray(documents) ? documents : [];
+
   // Compute Early Financial Stress scores for each farmer
-  const farmerStressList = farmers.map(f => detectFarmerFinancialStress(f, loans, repayments));
+  const farmerStressList = safeFarmers.map(f => detectFarmerFinancialStress(f, safeLoans, safeRepayments));
 
   // Compute early warning indicators from live dataset
   const riskItems = [];
 
   // 1. Overdue repayments
-  repayments.filter(r => r.status === 'Overdue').forEach(r => {
+  safeRepayments.filter(r => r && r.status === 'Overdue').forEach(r => {
     riskItems.push({
       id: `RSK-REP-${r.id}`,
       category: 'Overdue Repayment',
@@ -42,13 +47,13 @@ export default function RiskMonitoring({
       farmerName: r.farmerName,
       entityId: r.loanId,
       entityType: 'Loan',
-      explanation: `Harvest repayment is overdue past maturity date (${r.dueDate}). Unpaid balance of ${formatINR(r.amountDue - r.amountPaid)} presents NPA migration risk.`,
+      explanation: `Harvest repayment is overdue past maturity date (${r.dueDate}). Unpaid balance of ${formatINR((Number(r.amountDue) || 0) - (Number(r.amountPaid) || 0))} presents NPA migration risk.`,
       action: 'Initiate field recovery visit and verify mandi receipts'
     });
   });
 
   // 2. High prior external debt burden (> 35% of farm income)
-  farmers.filter(f => f.existingLoanBurden > f.annualIncome * 0.35).forEach(f => {
+  safeFarmers.filter(f => f && (Number(f.existingLoanBurden) || 0) > (Number(f.annualIncome) || 0) * 0.35).forEach(f => {
     riskItems.push({
       id: `RSK-DEBT-${f.id}`,
       category: 'High Debt Burden',
@@ -62,7 +67,7 @@ export default function RiskMonitoring({
   });
 
   // 3. Rainfed farming without assured irrigation
-  farmers.filter(f => f.landType === 'Rainfed').forEach(f => {
+  safeFarmers.filter(f => f && f.landType === 'Rainfed').forEach(f => {
     riskItems.push({
       id: `RSK-RAIN-${f.id}`,
       category: 'Rainfed Monsoon Vulnerability',
@@ -76,8 +81,8 @@ export default function RiskMonitoring({
   });
 
   // 4. Missing land title documents or pending verification
-  documents.filter(d => d.status === 'Missing' || d.status === 'Under Verification').forEach(d => {
-    const farmer = farmers.find(f => f.id === d.farmerId);
+  safeDocs.filter(d => d && (d.status === 'Missing' || d.status === 'Under Verification')).forEach(d => {
+    const farmer = safeFarmers.find(f => f && f.id === d.farmerId);
     riskItems.push({
       id: `RSK-DOC-${d.id}`,
       category: 'Incomplete Documentation',
@@ -85,7 +90,7 @@ export default function RiskMonitoring({
       farmerName: farmer ? farmer.name : d.farmerId,
       entityId: d.loanId || d.farmerId,
       entityType: d.loanId ? 'Loan' : 'Farmer',
-      explanation: `Mandatory ${d.type} is ${d.status.toLowerCase()}. Title scrutiny cannot be cleared for legal enforcement without primary record.`,
+      explanation: `Mandatory ${d.type} is ${(d.status || '').toLowerCase()}. Title scrutiny cannot be cleared for legal enforcement without primary record.`,
       action: 'Request document submission from village revenue officer'
     });
   });
