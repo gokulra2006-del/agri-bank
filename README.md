@@ -12,7 +12,7 @@ Traditional retail banking products impose rigid monthly EMIs and conventional c
 - **Transparent 7-Factor Farmer Resilience Scoring** (replacing black-box credit models)
 - **Harvest-Linked Repayment Planning** (matching repayment schedules to crop maturity and mandi sales)
 - **Four-Eye Maker-Checker Governance** (strict role-based separation between field sourcing and loan sanctioning)
-- **Offline-First Field Mobility** with regional language localization (English, Hindi, Kannada, Tamil, Telugu)
+- **Offline-First Field Mobility** with comprehensive 10-language regional localization (English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, Malayalam, Gujarati, Punjabi)
 - **DPDP Act Compliance & Data Privacy** (strict Aadhaar masking and anonymized village heatmaps)
 
 ---
@@ -32,7 +32,7 @@ cd agri-bank
 # Install project dependencies
 npm install
 
-# Run automated unit test suite (36 assertions)
+# Run automated unit test suite (48 assertions across resilience, climate & i18n)
 npm test
 
 # Launch Vite development server
@@ -54,13 +54,37 @@ Generates an optimized, code-split bundle in `dist/` with `React.lazy` chunks.
 | Layer | Technology / Implementation | Details |
 | :--- | :--- | :--- |
 | **Frontend Framework** | React 18 & Vite 5 | SPA with ES modules, fast HMR, and dynamic code splitting |
-| **Styling & Design System** | Pure CSS & CSS Variables | Professional light theme, zero heavy UI frameworks, responsive design |
+| **Styling & Design System** | Pure CSS & Indic Font Stack | Professional light theme, zero heavy UI frameworks, native Indic typography |
 | **Icons & Visuals** | Lucide React | High-contrast, lightweight SVG icon system |
 | **State & Datastore** | Client-Side MockStore (v4.0) | Schema migration, JSON corruption auto-healing, and 17 domain stores |
 | **Governance & Security** | RBAC Engine | Four-Eye principle: Branch Manager (BM), Relationship Officer (RO), Operations Admin (OA) |
 | **Privacy & Masking** | Regex Masking Engine | Guaranteed Aadhaar masking (`XXXX-XXXX-1234`) across views & exports |
-| **Multilingual Engine** | Localized i18n Dictionary | Zero-dependency translation across English, Hindi, Kannada, Tamil, Telugu |
-| **Automated Testing** | Node.js Test Suites | Headless execution: `resilienceEngine.test.js` & `climatePlatform.test.js` |
+| **Multilingual Engine** | Zero-Dependency i18n Core | Static pre-compiled dictionaries across 10 Indian languages with fallback chain |
+| **Automated Testing** | Node.js Test Suites | Headless execution: `resilienceEngine.test.js`, `climatePlatform.test.js`, `i18n.test.js` |
+
+---
+
+## 🌐 10-Language Full-Page Translation System
+
+AgriSahay features a zero-reload, full-page translation architecture supporting 10 major Indian languages:
+1. **English** (`en`)
+2. **हिन्दी – Hindi** (`hi`)
+3. **ಕನ್ನಡ – Kannada** (`kn`)
+4. **தமிழ் – Tamil** (`ta`)
+5. **తెలుగు – Telugu** (`te`)
+6. **मराठी – Marathi** (`mr`)
+7. **বাংলা – Bengali** (`bn`)
+8. **മലയാളം – Malayalam** (`ml`)
+9. **ગુજરાતી – Gujarati** (`gu`)
+10. **ਪੰਜਾਬੀ – Punjabi** (`pa`)
+
+### Multilingual Architectural Guarantees:
+- **Instant Full-Page Switching:** Changing language in the Topbar translates the entire UI immediately via React Context (`LanguageProvider`), with no page reload.
+- **Static Dictionaries (No Cloud APIs):** Zero external translation APIs, zero API keys, and zero runtime machine translation latency.
+- **Bulletproof Fallback Chain:** If a key is absent in a regional dictionary, it seamlessly falls back to English (`en`), and finally to the path string with development warnings.
+- **Protected Data Invariant:** Financial tokens (`₹` Indian Rupee), Aadhaar masks (`XXXX-XXXX-1234`), loan identifiers, farmer personal names, and village names are never corrupted by translation routines.
+- **Native Indic Typography:** Built-in font fallbacks for Devanagari, Kannada, Tamil, Telugu, Bengali, Malayalam, Gujarati, and Gurmukhi with adjusted line-height (`1.6`) to prevent vowel-sign (matra) clipping.
+- **Language Preview Portal (`/language-preview`):** Dedicated matrix dashboard tracking translation coverage percentages, missing keys, and native speaker verification statuses.
 
 ---
 
@@ -103,13 +127,13 @@ Designed for last-mile relationship officers traveling to remote villages. Inclu
 
 ## 🧪 Automated Test Suite
 
-AgriSahay includes an automated test harness covering core banking algorithms:
+AgriSahay includes an automated test harness covering core banking algorithms and i18n rules:
 
 ```bash
 npm test
 ```
 
-**Results: 36 Tests Passed (0 Failures)**
+**Results: 48 Tests Passed (0 Failures)**
 - ✅ RBAC maker-checker loan approval restrictions
 - ✅ Resilience Score mathematical weighting and categorization
 - ✅ Harvest repayment date calculations
@@ -117,15 +141,22 @@ npm test
 - ✅ What-If stress test yield reduction formulas
 - ✅ Multilingual agronomic keyword detection (English & Kannada)
 - ✅ Early financial stress tier classification
+- ✅ 10 regional dictionary compilation & validation
+- ✅ English fallback chain for missing keys
+- ✅ Dynamic token interpolation (`{count}`, `{name}`, `{date}`)
+- ✅ Coverage percentage calculations
+- ✅ Absolute preservation of Aadhaar masking & ₹ currency symbols across translations
 
 ---
 
 ## 📚 Project Documentation
 
 Detailed guides and presentation materials are located in the [`docs/`](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs) directory:
+- [10-Language i18n Architecture Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/I18N_ARCHITECTURE.md)
+- [Agricultural Banking Translation Glossary](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/TRANSLATION_GLOSSARY.md)
 - [Architecture & Data Specification](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/ARCHITECTURE.md)
 - [5-Minute & 10-Minute Live Demo Scripts](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEMO_SCRIPT.md)
-- [20 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
+- [26 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
 - [10-Slide Presentation Deck Outline](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/PRESENTATION_OUTLINE.md)
 - [Cloud Deployment Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/DEPLOY.md)
 
@@ -134,3 +165,4 @@ Detailed guides and presentation materials are located in the [`docs/`](file:///
 ## 📄 License & Academic Disclaimer
 
 This project is an **academic prototype** created strictly for demonstration, evaluation, and educational purposes. It is not affiliated with, endorsed by, or connected to Ujjivan Small Finance Bank's live core banking infrastructure. All customer identities, land records, and account numbers are simulated demo artifacts.
+

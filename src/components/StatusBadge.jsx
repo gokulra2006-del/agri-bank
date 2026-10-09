@@ -1,31 +1,64 @@
 import React from 'react';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function StatusBadge({ status, type = 'loan' }) {
+  const { t } = useTranslation();
   let bg = '#f1f5f9';
   let text = '#475569';
   let border = '#cbd5e1';
 
   const s = (status || '').toLowerCase();
+  let displayLabel = status;
 
-  if (s.includes('approved') || s.includes('verified') || s.includes('paid') || s.includes('low risk')) {
-    bg = '#dcfce7'; // green-100
-    text = '#15803d'; // green-700
+  if (s.includes('approved')) {
+    bg = '#dcfce7';
+    text = '#15803d';
+    border = '#bbf7d0';
+    displayLabel = t('languagePreview.statusApproved', {}, 'Approved');
+  } else if (s.includes('verified') || s.includes('paid') || s.includes('low risk')) {
+    bg = '#dcfce7';
+    text = '#15803d';
     border = '#bbf7d0';
   } else if (s.includes('disbursed')) {
-    bg = '#e0e7ff'; // indigo-100
-    text = '#3730a3'; // indigo-800
+    bg = '#e0e7ff';
+    text = '#3730a3';
     border = '#c7d2fe';
-  } else if (s.includes('under review') || s.includes('due soon') || s.includes('medium risk')) {
-    bg = '#fef3c7'; // amber-100
-    text = '#b45309'; // amber-700
+    displayLabel = t('languagePreview.statusDisbursed', {}, 'Disbursed');
+  } else if (s.includes('under review')) {
+    bg = '#fef3c7';
+    text = '#b45309';
     border = '#fde68a';
-  } else if (s.includes('submitted') || s.includes('pending') || s.includes('draft')) {
-    bg = '#e0f2fe'; // sky-100
-    text = '#0369a1'; // sky-700
+  } else if (s.includes('due soon')) {
+    bg = '#fef3c7';
+    text = '#b45309';
+    border = '#fde68a';
+    displayLabel = t('languagePreview.statusDueSoon', {}, 'Due Soon');
+  } else if (s.includes('medium risk')) {
+    bg = '#fef3c7';
+    text = '#b45309';
+    border = '#fde68a';
+  } else if (s.includes('submitted')) {
+    bg = '#e0f2fe';
+    text = '#0369a1';
     border = '#bae6fd';
-  } else if (s.includes('rejected') || s.includes('overdue') || s.includes('missing') || s.includes('manual review')) {
-    bg = '#fee2e2'; // red-100
-    text = '#b91c1c'; // red-700
+    displayLabel = t('languagePreview.statusSubmitted', {}, 'Submitted');
+  } else if (s.includes('pending') || s.includes('draft')) {
+    bg = '#e0f2fe';
+    text = '#0369a1';
+    border = '#bae6fd';
+  } else if (s.includes('rejected')) {
+    bg = '#fee2e2';
+    text = '#b91c1c';
+    border = '#fecaca';
+    displayLabel = t('languagePreview.statusRejected', {}, 'Rejected');
+  } else if (s.includes('overdue')) {
+    bg = '#fee2e2';
+    text = '#b91c1c';
+    border = '#fecaca';
+    displayLabel = t('languagePreview.statusOverdue', {}, 'Overdue');
+  } else if (s.includes('missing') || s.includes('manual review')) {
+    bg = '#fee2e2';
+    text = '#b91c1c';
     border = '#fecaca';
   }
 
@@ -53,7 +86,7 @@ export default function StatusBadge({ status, type = 'loan' }) {
           marginRight: '0.375rem'
         }}
       />
-      {status}
+      {displayLabel}
     </span>
   );
 }

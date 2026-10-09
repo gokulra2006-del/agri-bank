@@ -35,7 +35,8 @@ export const ROLE_PERMISSIONS = {
       'privacy-center',
       'help-desk',
       'notifications',
-      'settings'
+      'settings',
+      'language-preview'
     ],
     canApproveLoan: false,
     canRejectLoan: false,
@@ -74,7 +75,8 @@ export const ROLE_PERMISSIONS = {
       'audit-log',
       'help-desk',
       'notifications',
-      'settings'
+      'settings',
+      'language-preview'
     ],
     canApproveLoan: true,
     canRejectLoan: true,
@@ -108,7 +110,8 @@ export const ROLE_PERMISSIONS = {
       'privacy-center',
       'help-desk',
       'notifications',
-      'settings'
+      'settings',
+      'language-preview'
     ],
     canApproveLoan: false,
     canRejectLoan: false,

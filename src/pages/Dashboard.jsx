@@ -16,6 +16,7 @@ import MetricCard from '../components/MetricCard';
 import StatusBadge from '../components/StatusBadge';
 import { MonthlyApplicationsBarChart, LoanStatusDistribution } from '../components/SimpleChart';
 import { formatINR } from '../data/mockStore';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function Dashboard({
   farmers = [],
@@ -25,6 +26,7 @@ export default function Dashboard({
   onOpenRegisterFarmer,
   onOpenNewLoan
 }) {
+  const { t } = useTranslation();
   const totalFarmers = farmers.length;
   const pendingLoans = loans.filter(l => l.status === 'Submitted' || l.status === 'Under Review').length;
   const approvedLoans = loans.filter(l => l.status === 'Approved').length;
@@ -64,10 +66,10 @@ export default function Dashboard({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
-            Agriculture Credit Overview
+            {t('dashboard.title')}
           </h1>
           <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-            Ujjivan SFB Agriculture Banking Desk & Rural Credit Lifecycle Monitor
+            {t('dashboard.subtitle')}
           </p>
         </div>
 
@@ -88,21 +90,21 @@ export default function Dashboard({
             }}
             onClick={() => onNavigate('innovation-center')}
           >
-            ✨ Innovation Center (10 New Features)
+            {t('dashboard.innovationCenterBtn')}
           </button>
           <button
             className="btn btn-secondary"
             onClick={onOpenRegisterFarmer}
           >
             <UserPlus size={16} />
-            Register Farmer
+            {t('dashboard.registerFarmerBtn')}
           </button>
           <button
             className="btn btn-primary"
             onClick={onOpenNewLoan}
           >
             <PlusCircle size={16} />
-            New Loan Application
+            {t('dashboard.newLoanBtn')}
           </button>
         </div>
       </div>
@@ -110,41 +112,41 @@ export default function Dashboard({
       {/* KPI Cards Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         <MetricCard
-          title="Total Farmers"
+          title={t('dashboard.totalFarmers')}
           value={totalFarmers}
-          subtitle="Registered in Branch Service Area"
+          subtitle={t('dashboard.totalFarmersSub')}
           icon={Users}
           badgeText="+12% MoM"
           badgeColor="green"
         />
         <MetricCard
-          title="Pending Applications"
+          title={t('dashboard.pendingApprovals')}
           value={pendingLoans}
-          subtitle="Awaiting Field / Credit Sanction"
+          subtitle={t('dashboard.pendingApprovalsSub')}
           icon={FileClock}
           badgeText="Action Needed"
           badgeColor="amber"
         />
         <MetricCard
-          title="Sanctioned / Approved"
+          title={t('dashboard.approvedLoans')}
           value={approvedLoans}
-          subtitle="Ready for documentation & payout"
+          subtitle={t('dashboard.approvedLoansSub')}
           icon={CheckCircle2}
           badgeText="Pipeline"
           badgeColor="blue"
         />
         <MetricCard
-          title="Active Disbursed Loans"
+          title={t('dashboard.activePortfolio')}
           value={activeLoans}
-          subtitle={`Total Portfolio: ${formatINR(totalDisbursedAmt)}`}
+          subtitle={`${t('dashboard.activePortfolioSub')}: ${formatINR(totalDisbursedAmt)}`}
           icon={Landmark}
           badgeText="Live"
           badgeColor="green"
         />
         <MetricCard
-          title="Collection Efficiency"
+          title={t('dashboard.collectionEfficiency')}
           value={`${collectionRate}%`}
-          subtitle={`${formatINR(totalPaidAmt)} of ${formatINR(totalDueAmt)} collected`}
+          subtitle={`${formatINR(totalPaidAmt)} / ${formatINR(totalDueAmt)}`}
           icon={TrendingUp}
           badgeText="Harvest Tied"
           badgeColor="green"
@@ -200,17 +202,17 @@ export default function Dashboard({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
               <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0f172a' }}>
-                Recent Loan Applications
+                {t('dashboard.recentLoansTitle')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Latest submissions from branch field officers
+                {t('loans.subtitle')}
               </p>
             </div>
             <button
               onClick={() => onNavigate('loans')}
               style={{ background: 'none', border: 'none', color: '#1e3a8a', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
             >
-              See all ({loans.length}) →
+              {t('dashboard.viewAllLoans')} →
             </button>
           </div>
 
@@ -218,11 +220,11 @@ export default function Dashboard({
             <table>
               <thead>
                 <tr>
-                  <th>Application</th>
-                  <th>Farmer</th>
-                  <th>Crop / Land</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                  <th>{t('loans.colLoanId')}</th>
+                  <th>{t('farmers.colName')}</th>
+                  <th>{t('loans.colCrop')}</th>
+                  <th>{t('common.amount')}</th>
+                  <th>{t('common.status')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -258,24 +260,24 @@ export default function Dashboard({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
               <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0f172a' }}>
-                Upcoming Harvest Repayments
+                {t('dashboard.upcomingDuesTitle')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Harvest-linked seasonal due dates
+                {t('repayments.subtitle', 'Harvest-linked seasonal due dates')}
               </p>
             </div>
             <button
               onClick={() => onNavigate('repayments')}
               style={{ background: 'none', border: 'none', color: '#1e3a8a', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
             >
-              Manage ({repayments.length}) →
+              {t('dashboard.viewAllRepayments')} →
             </button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {upcomingRepayments.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.8125rem' }}>
-                No pending harvest repayments due soon.
+                {t('common.noData')}
               </div>
             ) : (
               upcomingRepayments.map((rep) => (

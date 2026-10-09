@@ -32,8 +32,8 @@
 ### Q9: How is the state managed across multiple components without Redux?
 **Answer:** We implemented a modular client-side repository pattern in `src/data/mockStore.js`. It exposes dedicated getters, setters, schema validation, and auto-migration helpers (`agrisahay_version: "4.0"`). Component state is cleanly synchronized with standard React hooks (`useState`, `useEffect`) and local storage subscriptions.
 
-### Q10: How did you handle multilingual localization?
-**Answer:** We developed a lightweight, zero-dependency translation dictionary (`src/utils/i18n.js`) supporting 5 languages: English, Hindi, Kannada, Tamil, and Telugu. Translations cover navigation categories, KPI metrics, status badges, and table headers.
+### Q10: How did you design the multilingual localization architecture?
+**Answer:** "AgriSahay uses a centralized localization architecture rather than translating only the navigation menu. Every user-facing label, form, message, status, validation prompt, and help article is connected to a translation key. This allows branch staff to operate the complete workflow in their preferred regional language while preserving the internal banking data and permissions." We support 10 official Indian languages (English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, Malayalam, Gujarati, and Punjabi) via React `LanguageProvider` with zero page reloads.
 
 ### Q11: What prevents duplicate farmer entries?
 **Answer:** The registration form enforces client-side validation that checks the entered 10-digit mobile number and Aadhaar against existing records in `agrisahay_farmers`. If a duplicate is detected, an accessible error alert banner is rendered without resetting the form.
@@ -64,3 +64,23 @@
 
 ### Q20: If you were given 3 months to deploy this to production, what would you add?
 **Answer:** (1) Replace `localStorage` with a secure Spring Boot / Node.js microservices backend and PostgreSQL database; (2) Integrate with UIDAI Aadhaar e-KYC and AgriStack / CUG API for real-time digital land record verification; (3) Connect to IMD (India Meteorological Department) weather APIs for automated hyper-local rainfall index triggers; (4) Implement Web Worker Background Sync for true PWA offline-to-online reconciliation.
+
+---
+
+### Q21: Why did you choose static in-app translation dictionaries over external Cloud Translation APIs?
+**Answer:** In banking, external runtime translation APIs introduce severe latency, security compliance risks, external failure points in offline rural environments, and non-deterministic translations for specialized financial terms (e.g. translating "KCC limit" incorrectly). Pre-compiled static dictionaries guarantee instant zero-latency UI re-rendering, 100% offline reliability, and deterministic compliance-verified terminology.
+
+### Q22: How does the system handle missing translation keys without crashing?
+**Answer:** We implement a resilient 3-tier fallback chain: `Requested Key -> Active Language Dictionary -> Master English Dictionary -> Raw Key String Path`. If a key is missing in Marathi, it seamlessly renders the English translation; in development mode, it logs a single deduplicated warning without console spam.
+
+### Q23: How do you handle dynamic variables and pluralization in Indic languages?
+**Answer:** The translation engine `t(key, vars)` uses safe regex token substitution (`{count}`, `{farmerName}`, `{amount}`). Dynamic strings like "Showing {count} items" or "Are you sure you want to delete {farmerName}?" are interpolated safely without risking XSS or string concatenation errors.
+
+### Q24: Why is it critical NOT to translate borrower names, account numbers, or Aadhaar values?
+**Answer:** Translating or transliterating personal identifiers and account numbers creates audit mismatch, core banking ledger corruption, and legal disputes. Core customer records (`Basavaraj Patil`, `FAR-001`, `LN-2025-001`) and masked Aadhaar (`XXXX-XXXX-1234`) remain invariant across all languages; only the descriptive labels and statuses are localized.
+
+### Q25: How do Indic script fonts affect UI design and responsiveness?
+**Answer:** Indic scripts (Devanagari, Kannada, Tamil, Telugu, etc.) have complex conjunct characters and vertical matras that require slightly larger line-height (1.6 instead of 1.4) to prevent ascender/descender clipping. We configured comprehensive Noto Sans font fallbacks and flexible flex/grid layouts with `min-width` so buttons and table cells expand naturally without overflowing.
+
+### Q26: How can branch managers verify translation completeness before deploying to a new rural region?
+**Answer:** We built a dedicated **Language Preview & Coverage** portal (`/language-preview`) accessible directly from Settings. It programmatically computes the exact percentage of completed keys against the English master, flags missing keys, shows review status badges, and provides an interactive side-by-side component inspector across all 10 languages.

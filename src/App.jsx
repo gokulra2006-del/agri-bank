@@ -29,6 +29,7 @@ const RiskSimulatorPage = lazy(() => import('./pages/RiskSimulatorPage'));
 const VillageHeatmapPage = lazy(() => import('./pages/VillageHeatmapPage'));
 const PrivacyCenterPage = lazy(() => import('./pages/PrivacyCenterPage'));
 const ImpactDashboardPage = lazy(() => import('./pages/ImpactDashboardPage'));
+const LanguagePreviewPage = lazy(() => import('./pages/LanguagePreviewPage'));
 
 const PageLoader = () => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '360px', gap: '0.75rem', color: '#64748b' }} role="status" aria-live="polite">
@@ -658,7 +659,16 @@ export default function App() {
               )}
 
               {currentPage === 'settings' && (
-                <SettingsPage />
+                <SettingsPage
+                  onNavigate={handleNavigate}
+                  onLangChange={handleLangChange}
+                />
+              )}
+
+              {currentPage === 'language-preview' && (
+                <LanguagePreviewPage
+                  onNavigate={handleNavigate}
+                />
               )}
             </Suspense>
           )}

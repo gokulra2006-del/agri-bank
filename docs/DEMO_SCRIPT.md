@@ -29,11 +29,16 @@
 * **Talking Points:**
   > *"AgriSahay enforces strict banking governance. Notice that when switched to Relationship Officer, loan sanctioning is disabled—preventing self-approval under the Four-Eye Principle. Furthermore, Aadhaar is masked everywhere as XXXX-XXXX-1234 in compliance with DPDP regulations, and village heatmaps aggregate risk without exposing personal borrower finances."*
 
-### 4:15 - 5:00 | Offline Readiness & Multilingual Field Experience
-* **Click path:** Toggle language to **Kannada (ಕನ್ನಡ)** $\to$ show **Field Officer Mode**.
+### 4:15 - 5:00 | Zero-Reload Full-Page Translation Across 10 Languages
+* **Click path:** 
+  1. Open the [Dashboard](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/src/pages/Dashboard.jsx) in English.
+  2. In the top navigation bar, switch the language to **Kannada (ಕನ್ನಡ – Kannada)**. Observe how every dashboard card, KPI, button, and navigation header immediately translates without page reload.
+  3. Navigate to **Farmers Directory** and click **Basavaraj Patil** to inspect the fully localized 360° Profile.
+  4. Switch language to **Hindi (हिन्दी – Hindi)** and open **Farmer Help Desk** (`/help-desk`) to show localized loan guidelines and FAQs.
+  5. Refresh the browser page (`F5`) to demonstrate that the language preference is preserved from `localStorage`.
+  6. Open **Settings** $\to$ click **Inspect Translation Coverage** (`/language-preview`) to showcase the live matrix of all 10 official languages with 100% key completion.
 * **Talking Points:**
-  > *"In rural hinterlands with zero cellular reception, Field Officers can operate completely offline with localized Kannada or Hindi interfaces. When connectivity returns, transactions sync seamlessly.*  
-  > *All 36 unit tests pass, and the application builds cleanly into code-split production bundles. I welcome your questions."*
+  > *"AgriSahay uses a centralized localization architecture rather than translating only the navigation menu. Every user-facing label, form, message, status, validation prompt, and help article is connected to a translation key. This allows branch staff to operate the complete workflow in their preferred regional language while preserving the internal banking data and permissions."*
 
 ---
 
@@ -41,11 +46,11 @@
 
 | Minute | Screen | Key Demonstration |
 | :--- | :--- | :--- |
-| **0:00 - 1:30** | Dashboard & Topbar | Multi-branch filtering (Mandya, Dharmapuri, Nashik, Guntur), portfolio KPI breakdown, 5-language switcher (`en`, `hi`, `kn`, `ta`, `te`). |
-| **1:30 - 3:00** | Farmers & Profile | Farmer registration with duplicate 10-digit mobile number validation, landholding verification, Aadhaar masking, 7-factor resilience breakdown. |
+| **0:00 - 1:30** | Dashboard & Topbar | Multi-branch filtering, portfolio KPI breakdown, 10-language switcher (`en`, `hi`, `kn`, `ta`, `te`, `mr`, `bn`, `ml`, `gu`, `pa`). |
+| **1:30 - 3:00** | Farmers & Profile | Farmer registration with duplicate phone validation, landholding verification, Aadhaar masking, 7-factor resilience breakdown. |
 | **3:00 - 4:30** | Loan Applications & RBAC | Maker-Checker loan processing workflow. Relationship Officer submits loan; Branch Manager inspects, reviews land documents, and sanctions. |
 | **4:30 - 6:00** | Repayment Planner & Simulator | Contrast standard monthly EMI vs. harvest-linked bullet payment. Run drought and pest stress scenarios with yield sensitivity charts. |
-| **6:00 - 7:30** | Field Officer Mode & Smart Notes | Demonstrate offline village visit capture, photo attachments, and rule-based agricultural note extraction in regional vernacular. |
-| **7:30 - 8:45** | Community Heatmap & Privacy Center | Anonymized village-level climate and repayment stress heatmaps. DPDP consent revocation log. |
-| **8:45 - 9:30** | Audit Log & Reports | Searchable regulatory audit trail capturing all user actions with timestamps. CSV report export with masked personal identifiers. |
-| **9:30 - 10:00** | Tech Stack, Tests, & Q&A | Review 36/36 passing automated unit tests, production bundle optimization, and wrap up. |
+| **6:00 - 7:30** | Field Officer Mode & Offline Sync | Demonstrate offline village visit capture, photo attachments, and rule-based agricultural note extraction in regional vernacular. |
+| **7:30 - 8:30** | Language Preview & Coverage | Open `/language-preview` to inspect the 10-language matrix and live component translation previews. |
+| **8:30 - 9:30** | Audit Log & Privacy Center | Searchable regulatory audit trail, DPDP consent log, and CSV exports with masked personal identifiers. |
+| **9:30 - 10:00** | Tech Stack, Tests, & Q&A | Review 48/48 passing automated unit tests, production bundle optimization, and wrap up. |

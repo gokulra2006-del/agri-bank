@@ -33,56 +33,57 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
   // Navigation organized into clean logical functional groups with multilingual support
   const navSections = [
     {
-      groupKey: 'nav_group_overview',
+      groupKey: 'navigation.overviewGroup',
       defaultGroupLabel: 'Overview & Analytics',
       items: [
-        { id: 'dashboard', labelKey: 'nav_dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
-        { id: 'impact-dashboard', labelKey: 'nav_impact_dashboard', defaultLabel: 'Impact Dashboard', icon: TrendingUp },
-        { id: 'innovation-center', labelKey: 'nav_innovation_center', defaultLabel: 'Innovation Center', icon: Sparkles }
+        { id: 'dashboard', labelKey: 'navigation.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
+        { id: 'impact-dashboard', labelKey: 'navigation.impactDashboard', defaultLabel: 'Impact Dashboard', icon: TrendingUp },
+        { id: 'innovation-center', labelKey: 'navigation.innovationCenter', defaultLabel: 'Innovation Center', icon: Sparkles }
       ]
     },
     {
-      groupKey: 'nav_group_farmers_credit',
+      groupKey: 'navigation.farmersCreditGroup',
       defaultGroupLabel: 'Farmers & Credit',
       items: [
-        { id: 'farmers', labelKey: 'nav_farmers', defaultLabel: 'Farmers Directory', icon: Users },
-        { id: 'loans', labelKey: 'nav_loans', defaultLabel: 'Loan Applications', icon: FileText },
-        { id: 'eligibility', labelKey: 'nav_eligibility', defaultLabel: 'Eligibility Assessment', icon: Calculator },
-        { id: 'repayments', labelKey: 'nav_repayments', defaultLabel: 'Repayments Ledger', icon: CalendarCheck2 },
-        { id: 'repayment-planner', labelKey: 'nav_repayment_planner', defaultLabel: 'Harvest Repayment Planner', icon: Calendar }
+        { id: 'farmers', labelKey: 'navigation.farmers', defaultLabel: 'Farmers Directory', icon: Users },
+        { id: 'loans', labelKey: 'navigation.loans', defaultLabel: 'Loan Applications', icon: FileText },
+        { id: 'eligibility', labelKey: 'navigation.eligibility', defaultLabel: 'Eligibility Assessment', icon: Calculator },
+        { id: 'repayments', labelKey: 'navigation.repayments', defaultLabel: 'Repayments Ledger', icon: CalendarCheck2 },
+        { id: 'repayment-planner', labelKey: 'navigation.repaymentPlanner', defaultLabel: 'Harvest Repayment Planner', icon: Calendar }
       ]
     },
     {
-      groupKey: 'nav_group_field_ops',
+      groupKey: 'navigation.fieldOpsGroup',
       defaultGroupLabel: 'Field Operations',
       items: [
-        { id: 'field-mode', labelKey: 'nav_field_mode', defaultLabel: 'Field Officer Mode', icon: Compass },
-        { id: 'documents', labelKey: 'nav_documents', defaultLabel: 'Documents Vault', icon: FolderOpen },
-        { id: 'crop-calendar', labelKey: 'nav_crop_calendar', defaultLabel: 'Crop Calendar', icon: Calendar },
-        { id: 'branches', labelKey: 'nav_branches', defaultLabel: 'Branches & Staff', icon: Building2 }
+        { id: 'field-mode', labelKey: 'navigation.fieldMode', defaultLabel: 'Field Officer Mode', icon: Compass },
+        { id: 'documents', labelKey: 'navigation.documents', defaultLabel: 'Documents Vault', icon: FolderOpen },
+        { id: 'crop-calendar', labelKey: 'navigation.cropCalendar', defaultLabel: 'Crop Calendar', icon: Calendar },
+        { id: 'branches', labelKey: 'navigation.branches', defaultLabel: 'Branches & Staff', icon: Building2 }
       ]
     },
     {
-      groupKey: 'nav_group_climate_risk',
+      groupKey: 'navigation.climateRiskGroup',
       defaultGroupLabel: 'Climate Risk & Resilience',
       items: [
-        { id: 'risk-monitoring', labelKey: 'nav_risk_monitoring', defaultLabel: 'Credit Risk Radar', icon: ShieldAlert },
-        { id: 'risk-simulator', labelKey: 'nav_risk_simulator', defaultLabel: 'What-If Risk Simulator', icon: Sliders },
-        { id: 'village-heatmap', labelKey: 'nav_village_heatmap', defaultLabel: 'Village Risk Heatmap', icon: MapPin },
-        { id: 'weather-risk', labelKey: 'nav_weather_risk', defaultLabel: 'Weather & Crop Risk', icon: CloudSun }
+        { id: 'risk-monitoring', labelKey: 'navigation.riskMonitoring', defaultLabel: 'Credit Risk Radar', icon: ShieldAlert },
+        { id: 'risk-simulator', labelKey: 'navigation.riskSimulator', defaultLabel: 'What-If Risk Simulator', icon: Sliders },
+        { id: 'village-heatmap', labelKey: 'navigation.villageHeatmap', defaultLabel: 'Village Risk Heatmap', icon: MapPin },
+        { id: 'weather-risk', labelKey: 'navigation.weatherRisk', defaultLabel: 'Weather & Crop Risk', icon: CloudSun }
       ]
     },
     {
-      groupKey: 'nav_group_governance',
+      groupKey: 'navigation.governanceGroup',
       defaultGroupLabel: 'Governance & Support',
       items: [
-        { id: 'schemes', labelKey: 'nav_schemes', defaultLabel: 'Schemes & Subsidies', icon: Landmark },
-        { id: 'privacy-center', labelKey: 'nav_privacy_center', defaultLabel: 'Farmer Consent & Privacy', icon: Lock },
-        { id: 'reports', labelKey: 'nav_reports', defaultLabel: 'Reports & Export', icon: BarChart3 },
-        { id: 'audit-log', labelKey: 'nav_audit_log', defaultLabel: 'Audit Trail', icon: History },
-        { id: 'help-desk', labelKey: 'nav_help_desk', defaultLabel: 'Farmer Help Desk', icon: LifeBuoy },
-        { id: 'notifications', labelKey: 'nav_notifications', defaultLabel: 'Notifications', icon: Bell },
-        { id: 'settings', labelKey: 'nav_settings', defaultLabel: 'Settings', icon: Settings }
+        { id: 'schemes', labelKey: 'navigation.schemes', defaultLabel: 'Schemes & Subsidies', icon: Landmark },
+        { id: 'privacy-center', labelKey: 'navigation.privacyCenter', defaultLabel: 'Farmer Consent & Privacy', icon: Lock },
+        { id: 'reports', labelKey: 'navigation.reports', defaultLabel: 'Reports & Export', icon: BarChart3 },
+        { id: 'audit-log', labelKey: 'navigation.auditLog', defaultLabel: 'Audit Trail', icon: History },
+        { id: 'helpDesk', labelKey: 'navigation.helpDesk', defaultLabel: 'Farmer Help Desk', icon: LifeBuoy },
+        { id: 'notifications', labelKey: 'navigation.notifications', defaultLabel: 'Notifications', icon: Bell },
+        { id: 'settings', labelKey: 'navigation.settings', defaultLabel: 'Settings', icon: Settings },
+        { id: 'language-preview', labelKey: 'navigation.languagePreview', defaultLabel: 'Language Preview & Coverage', icon: Sparkles }
       ]
     }
   ];
@@ -174,7 +175,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
             return (
               <div key={sIdx} style={{ marginBottom: '0.875rem' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#94a3b8', padding: '0.25rem 0.75rem', letterSpacing: '0.05em' }}>
-                  {t(section.groupKey, currentLang, section.defaultGroupLabel)}
+                  {t(section.groupKey, {}, currentLang)}
                 </div>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                   {filteredItems.map((item) => {
@@ -207,7 +208,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
                       >
                         <Icon size={16} color={active ? '#15803d' : '#64748b'} />
                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {t(item.labelKey, currentLang, item.defaultLabel)}
+                          {t(item.labelKey, {}, currentLang)}
                         </span>
                       </button>
                     );

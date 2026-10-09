@@ -1,7 +1,10 @@
 import React from 'react';
 import { HelpCircle, FileCheck2, Calendar, ShieldCheck, PhoneCall, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function HelpDesk() {
+  const { t } = useTranslation();
+
   const faqs = [
     {
       q: '1. What documents are required for an Agricultural Crop Loan (KCC)?',
@@ -30,10 +33,10 @@ export default function HelpDesk() {
       {/* Header */}
       <div>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
-          Farmer Support & Financial Literacy Desk
+          {t('helpDesk.title')}
         </h1>
         <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-          Simple, non-technical guidance explaining agricultural credit, document checklists, and harvest repayments
+          {t('helpDesk.subtitle')}
         </p>
       </div>
 
@@ -45,20 +48,20 @@ export default function HelpDesk() {
           </div>
           <div>
             <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#14532d' }}>
-              Branch Agricultural Helpline & Field Help
+              {t('helpDesk.helplineTitle')}
             </h3>
             <span style={{ fontSize: '0.75rem', color: '#166534' }}>
-              Free advisory for smallholder and marginal farmers (Demo Contact)
+              {t('helpDesk.helplineSub')}
             </span>
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.8125rem', color: '#14532d' }}>
           <div>
-            <strong>Toll-Free Helpline (Demo):</strong>
+            <strong>{t('helpDesk.tollFreeLabel')}</strong>
             <p>1800-425-0099 (Mon–Sat, 9:00 AM – 5:00 PM)</p>
           </div>
           <div>
-            <strong>Village Camp Office:</strong>
+            <strong>{t('helpDesk.campOfficeLabel')}</strong>
             <p>Plot #14, APMC Yard Road, Mandya Central, Karnataka</p>
           </div>
         </div>
@@ -67,14 +70,14 @@ export default function HelpDesk() {
       {/* Step by step procedure */}
       <div className="card" style={{ padding: '1.25rem' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '1rem' }}>
-          4 Easy Steps to Your Agriculture Loan
+          {t('helpDesk.fourStepsTitle')}
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
           {[
-            { step: '1', title: 'Registration & KYC', desc: 'Submit RTC / 7-12 extract, Aadhaar, and bank passbook with your field officer.' },
-            { step: '2', title: 'Farm Inspection', desc: 'Officer visits your land to verify crop sowing, soil, and irrigation access.' },
-            { step: '3', title: 'Scale of Finance Limit', desc: 'Credit amount is fixed according to district crop cultivation guidelines.' },
-            { step: '4', title: 'Post-Harvest Repayment', desc: 'Pay back comfortably after harvesting and selling your produce in the mandi.' }
+            { step: '1', title: t('helpDesk.step1Title'), desc: t('helpDesk.step1Desc') },
+            { step: '2', title: t('helpDesk.step2Title'), desc: t('helpDesk.step2Desc') },
+            { step: '3', title: t('helpDesk.step3Title'), desc: t('helpDesk.step3Desc') },
+            { step: '4', title: t('helpDesk.step4Title'), desc: t('helpDesk.step4Desc') }
           ].map(s => (
             <div key={s.step} style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.375rem', border: '1px solid #e2e8f0' }}>
               <div style={{ width: '26px', height: '26px', borderRadius: '50%', backgroundColor: '#15803d', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.8125rem', marginBottom: '0.5rem' }}>
@@ -90,7 +93,7 @@ export default function HelpDesk() {
       {/* Frequently Asked Questions */}
       <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
-          Frequently Asked Questions (Farmer Knowledge Base)
+          {t('helpDesk.faqTitle')}
         </h3>
 
         {faqs.map((f, i) => (

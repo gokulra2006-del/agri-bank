@@ -16,6 +16,7 @@ import StatusBadge from '../components/StatusBadge';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { formatINR, formatDate } from '../data/mockStore';
 import { calculateResilienceScore } from '../utils/resilienceEngine';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function Farmers({
   farmers = [],
@@ -25,6 +26,7 @@ export default function Farmers({
   onSelectFarmer,
   currentRole = 'manager'
 }) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCrop, setSelectedCrop] = useState('ALL');
   const [selectedDistrict, setSelectedDistrict] = useState('ALL');
@@ -173,15 +175,15 @@ export default function Farmers({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
-            Registered Farmers & Landholders
+            {t('farmers.title')}
           </h1>
           <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-            Farmer KYC, landholdings, crop profiles and household income records
+            {t('farmers.subtitle')}
           </p>
         </div>
         <button className="btn btn-primary" onClick={openAddModal}>
           <UserPlus size={16} />
-          Register New Farmer
+          {t('farmers.registerBtn')}
         </button>
       </div>
 
@@ -193,7 +195,7 @@ export default function Farmers({
               <Search size={15} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
               <input
                 type="text"
-                placeholder="Search by name, ID, village..."
+                placeholder={t('farmers.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -210,7 +212,7 @@ export default function Farmers({
                 setPage(1);
               }}
             >
-              <option value="ALL">All Crops</option>
+              <option value="ALL">{t('common.all')} {t('common.crop')}</option>
               {crops.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
 
@@ -221,17 +223,17 @@ export default function Farmers({
                 setPage(1);
               }}
             >
-              <option value="ALL">All Districts</option>
+              <option value="ALL">{t('common.all')} {t('common.district')}</option>
               {districts.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Sort by:</span>
+            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{t('farmers.sortBy')}:</span>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="name">Farmer Name</option>
-              <option value="land">Land Holding (High to Low)</option>
-              <option value="income">Annual Income (High to Low)</option>
+              <option value="name">{t('farmers.sortName')}</option>
+              <option value="land">{t('farmers.sortLand')}</option>
+              <option value="income">{t('farmers.sortIncome')}</option>
             </select>
           </div>
         </div>
@@ -243,14 +245,13 @@ export default function Farmers({
           <table>
             <thead>
               <tr>
-                <th>Farmer ID & Name</th>
-                <th>Location</th>
-                <th>Land & Crop</th>
-                <th>Resilience Score</th>
-                <th>Annual Income</th>
-                <th>Document KYC</th>
-                <th>Branch</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('farmers.colName')}</th>
+                <th>{t('farmers.colVillage')}</th>
+                <th>{t('farmers.colCrops')}</th>
+                <th>{t('farmers.colResilience')}</th>
+                <th>{t('farmers.colIncome')}</th>
+                <th>{t('farmers.colStatus')}</th>
+                <th style={{ textAlign: 'right' }}>{t('farmers.colActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -325,14 +326,14 @@ export default function Farmers({
                         <button
                           className="btn btn-secondary btn-sm"
                           onClick={() => onSelectFarmer(farmer.id)}
-                          title="View Farmer 360 Profile"
+                          title={t('farmers.viewProfile')}
                         >
                           <Eye size={14} />
                         </button>
                         <button
                           className="btn btn-secondary btn-sm"
                           onClick={() => openEditModal(farmer)}
-                          title="Edit Farmer"
+                          title={t('farmers.editFarmer')}
                         >
                           <Edit2 size={14} />
                         </button>
@@ -341,7 +342,7 @@ export default function Farmers({
                             className="btn btn-secondary btn-sm"
                             style={{ color: '#dc2626' }}
                             onClick={() => setDeleteModalTarget(farmer)}
-                            title="Delete Record"
+                            title={t('farmers.deleteFarmer')}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -359,7 +360,7 @@ export default function Farmers({
         {/* Pagination bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', borderTop: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
           <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-            Showing {paginated.length} of {filtered.length} registered farmers
+            {t('common.showingCount', { count: paginated.length })} ({filtered.length} total)
           </span>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button
@@ -367,10 +368,10 @@ export default function Farmers({
               disabled={currentPage === 1}
               onClick={() => setPage(p => Math.max(1, p - 1))}
             >
-              Previous
+              {t('common.back')}
             </button>
             <span style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', padding: '0 0.5rem' }}>
-              Page {currentPage} of {totalPages}
+              {currentPage} / {totalPages}
             </span>
             <button
               className="btn btn-secondary btn-sm"
@@ -585,10 +586,10 @@ export default function Farmers({
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  {editingFarmer ? 'Update Profile' : 'Save & Register Farmer'}
+                  {editingFarmer ? t('common.save') : t('farmers.registerBtn')}
                 </button>
               </div>
             </form>
@@ -599,11 +600,11 @@ export default function Farmers({
       {/* Confirmation Modal for Deletion */}
       <ConfirmationModal
         isOpen={Boolean(deleteModalTarget)}
-        title="Remove Farmer Profile"
-        message={`Are you sure you want to delete the record for ${deleteModalTarget?.name} (${deleteModalTarget?.id})?`}
-        details="This will also cascade remove any linked demo applications and documents from this session."
+        title={t('farmers.modalDeleteTitle')}
+        message={t('farmers.modalDeleteConfirm', { farmerName: deleteModalTarget?.name || '', farmerId: deleteModalTarget?.id || '' })}
+        details="This will also cascade remove linked demo records from this session. Immutable audit log will record this event."
         confirmVariant="danger"
-        confirmLabel="Yes, Delete Record"
+        confirmLabel={t('common.delete')}
         onClose={() => setDeleteModalTarget(null)}
         onConfirm={() => {
           if (deleteModalTarget) {

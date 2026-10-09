@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import { calculateAgriEligibility, formatINR } from '../data/mockStore';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function LoanApplications({
   loans = [],
@@ -21,6 +22,7 @@ export default function LoanApplications({
   onAddLoan,
   initialFarmerId = null
 }) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -118,24 +120,24 @@ export default function LoanApplications({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
-            Agricultural Loan Origination & Applications
+            {t('loans.title')}
           </h1>
           <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-            End-to-end processing pipeline from Draft to Disbursement with harvest-aligned underwriting
+            {t('loans.subtitle')}
           </p>
         </div>
         <button
           className="btn btn-primary"
           onClick={() => {
             if (farmers.length === 0) {
-              alert('Please register at least one farmer first.');
+              alert(t('loans.selectFarmerLabel'));
               return;
             }
             setIsModalOpen(true);
           }}
         >
           <PlusCircle size={16} />
-          Create New Application
+          {t('loans.applyBtn')}
         </button>
       </div>
 
@@ -146,7 +148,7 @@ export default function LoanApplications({
             <Search size={15} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
             <input
               type="text"
-              placeholder="Search by Loan ID, Farmer, Crop..."
+              placeholder={t('loans.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ paddingLeft: '2.25rem', width: '100%' }}
@@ -154,9 +156,9 @@ export default function LoanApplications({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Filter Status:</span>
+            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{t('common.filter')}:</span>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-              <option value="ALL">All Statuses ({loans.length})</option>
+              <option value="ALL">{t('common.all')} ({loans.length})</option>
               {statuses.map(st => (
                 <option key={st} value={st}>
                   {st} ({loans.filter(l => l.status === st).length})
@@ -173,22 +175,21 @@ export default function LoanApplications({
           <table>
             <thead>
               <tr>
-                <th>Loan Ref & Date</th>
-                <th>Farmer</th>
-                <th>Product Type</th>
-                <th>Crop & Acreage</th>
-                <th>Applied Amount</th>
-                <th>Harvest Due Date</th>
-                <th>Risk Profile</th>
-                <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('loans.colLoanId')}</th>
+                <th>{t('loans.colBorrower')}</th>
+                <th>{t('loans.colType')}</th>
+                <th>{t('loans.colCrop')}</th>
+                <th>{t('loans.colAppliedAmt')}</th>
+                <th>{t('loans.harvestDateLabel')}</th>
+                <th>{t('common.status')}</th>
+                <th style={{ textAlign: 'right' }}>{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                    No agricultural loan applications found.
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                    {t('common.noData')}
                   </td>
                 </tr>
               ) : (

@@ -141,7 +141,7 @@ export default function Topbar({
           </select>
         </div>
 
-        {/* Language Selector */}
+        {/* Language Selector (10 Indian Languages) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <select
             value={currentLang}
@@ -151,15 +151,24 @@ export default function Topbar({
               fontSize: '0.75rem',
               fontWeight: 500,
               padding: '0.35rem 0.5rem',
-              backgroundColor: '#f8fafc'
+              backgroundColor: '#f8fafc',
+              border: '1px solid #cbd5e1',
+              borderRadius: '0.375rem',
+              color: '#1e293b',
+              cursor: 'pointer'
             }}
             title="Interface Language"
           >
             <option value="en">English</option>
-            <option value="hi">हिन्दी</option>
-            <option value="kn">ಕನ್ನಡ</option>
-            <option value="ta">தமிழ்</option>
-            <option value="te">తెలుగు</option>
+            <option value="hi">हिन्दी – Hindi</option>
+            <option value="kn">ಕನ್ನಡ – Kannada</option>
+            <option value="ta">தமிழ் – Tamil</option>
+            <option value="te">తెలుగు – Telugu</option>
+            <option value="mr">मराठी – Marathi</option>
+            <option value="bn">বাংলা – Bengali</option>
+            <option value="ml">മലയാളം – Malayalam</option>
+            <option value="gu">ગુજરાતી – Gujarati</option>
+            <option value="pa">ਪੰਜਾਬੀ – Punjabi</option>
           </select>
         </div>
 

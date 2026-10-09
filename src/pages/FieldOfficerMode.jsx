@@ -22,6 +22,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { logAudit } from '../utils/audit';
 import { saveOfflineQueue, getOfflineQueue } from '../data/mockStore';
 import { extractSmartVisitNotes } from '../utils/climatePlatformUtils';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function FieldOfficerMode({
   visits = [],
@@ -32,6 +33,7 @@ export default function FieldOfficerMode({
   isOfflineMode,
   onToggleOffline
 }) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [activeModalVisit, setActiveModalVisit] = useState(null); // for editing/completing visit notes
@@ -186,14 +188,14 @@ export default function FieldOfficerMode({
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
-              Field Officer Operations Desk
+              {t('fieldOfficer.title')}
             </h1>
             <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '0.2rem 0.6rem', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3' }}>
               ARO Mobile Portal
             </span>
           </div>
           <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-            Village farm visits, physical crop health appraisal, irrigation checks & geocoded verification
+            {t('fieldOfficer.subtitle')}
           </p>
         </div>
 
@@ -206,12 +208,12 @@ export default function FieldOfficerMode({
 
           <button className="btn btn-secondary" onClick={onOpenNewFarmer}>
             <PlusCircle size={15} />
-            Register Farmer in Field
+            {t('farmers.registerBtn')}
           </button>
 
           <button className="btn btn-primary" onClick={() => setIsNewVisitModalOpen(true)}>
             <Calendar size={15} />
-            Schedule Field Inspection
+            {t('fieldOfficer.scheduleVisitBtn')}
           </button>
         </div>
       </div>

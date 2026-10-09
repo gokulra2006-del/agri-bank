@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Settings, Globe, Shield, Bell, User, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { getSettings, saveSettings, resetDemoData, getBranches } from '../data/mockStore';
 
-export default function SettingsPage() {
+export default function SettingsPage({ onNavigate, onLangChange }) {
   const [settings, setSettingsState] = useState(getSettings());
   const [saveToast, setSaveToast] = useState(false);
   const branches = getBranches();
@@ -96,10 +96,33 @@ export default function SettingsPage() {
 
         {/* Language & Local Support */}
         <div className="card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0f172a', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Globe size={18} color="#2563eb" />
-            Language & Regional Localization
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+              <Globe size={18} color="#2563eb" />
+              Language & Regional Localization
+            </h3>
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={() => onNavigate('language-preview')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  backgroundColor: '#f0fdf4',
+                  color: '#15803d',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '6px',
+                  padding: '0.3rem 0.6rem',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Inspect Translation Coverage (10 Languages) →
+              </button>
+            )}
+          </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>
@@ -107,17 +130,26 @@ export default function SettingsPage() {
             </label>
             <select
               value={settings.language}
-              onChange={(e) => setSettingsState({ ...settings, language: e.target.value })}
+              onChange={(e) => {
+                const newLang = e.target.value;
+                setSettingsState({ ...settings, language: newLang });
+                if (onLangChange) onLangChange(newLang);
+              }}
               style={{ width: '100%' }}
             >
               <option value="en">English (Banking Standard)</option>
-              <option value="hi">हिन्दी (Hindi - Regional Banking)</option>
-              <option value="kn">ಕನ್ನಡ (Kannada - Rural Desk)</option>
-              <option value="ta">தமிழ் (Tamil - Rural Desk)</option>
-              <option value="te">తెలుగు (Telugu - Rural Desk)</option>
+              <option value="hi">हिन्दी – Hindi (Regional Banking)</option>
+              <option value="kn">ಕನ್ನಡ – Kannada (Rural Desk)</option>
+              <option value="ta">தமிழ் – Tamil (Rural Desk)</option>
+              <option value="te">తెలుగు – Telugu (Rural Desk)</option>
+              <option value="mr">मराठी – Marathi (Rural Desk)</option>
+              <option value="bn">বাংলা – Bengali (Rural Desk)</option>
+              <option value="ml">മലയാളം – Malayalam (Rural Desk)</option>
+              <option value="gu">ગુજરાતી – Gujarati (Rural Desk)</option>
+              <option value="pa">ਪੰਜਾਬੀ – Punjabi (Rural Desk)</option>
             </select>
             <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.35rem', display: 'block' }}>
-              Multi-language support for farmer notices and branch field interactions.
+              Multi-language support for farmer notices, branch field interactions, and full-page UI translation across 10 official Indian languages.
             </span>
           </div>
         </div>
