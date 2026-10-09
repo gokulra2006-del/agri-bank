@@ -22,6 +22,10 @@ export default class ErrorBoundary extends React.Component {
   };
 
   handleReset = () => {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.clear();
+      if (typeof sessionStorage !== 'undefined') sessionStorage.clear();
+    } catch (e) {}
     resetDemoData();
   };
 
@@ -89,7 +93,7 @@ export default class ErrorBoundary extends React.Component {
             </div>
 
             {this.state.error && (
-              <details style={{ marginTop: '1.5rem', textAlign: 'left', fontSize: '0.75rem', color: '#94a3b8' }}>
+              <details open style={{ marginTop: '1.5rem', textAlign: 'left', fontSize: '0.75rem', color: '#94a3b8' }}>
                 <summary style={{ cursor: 'pointer', marginBottom: '0.5rem', fontWeight: 600 }}>
                   Technical Diagnostic Details
                 </summary>

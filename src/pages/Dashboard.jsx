@@ -269,7 +269,7 @@ export default function Dashboard({
                 {t('dashboard.upcomingDuesTitle')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                {t('repayments.subtitle', 'Harvest-linked seasonal due dates')}
+                {t('dashboard.upcomingDuesSubtitle', 'Harvest-linked seasonal due dates')}
               </p>
             </div>
             <button

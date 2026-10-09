@@ -98,6 +98,7 @@ export const en = {
     collectionEfficiencySub: 'Harvest-aligned collections vs. target dues',
     recentLoansTitle: 'Recent Loan Applications Pipeline',
     upcomingDuesTitle: 'Upcoming Harvest Repayments (Next 30 Days)',
+    upcomingDuesSubtitle: 'Harvest-linked seasonal due dates',
     quickActions: 'Quick Desk Actions',
     registerFarmerBtn: 'Register Farmer',
     newLoanBtn: 'New Loan Application',

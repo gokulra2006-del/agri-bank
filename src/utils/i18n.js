@@ -63,10 +63,18 @@ function getNestedValue(obj, path) {
  * Supports variable interpolation {varName}
  */
 export function t(key, vars = {}, lang = 'en') {
-  // If the second argument is a string (legacy call: t(key, lang)), handle gracefully
+  if (!key) return '';
+
+  let fallback = key;
+  // If the second argument is a string (legacy call: t(key, lang) or fallback default text)
   if (typeof vars === 'string') {
-    lang = vars;
-    vars = {};
+    if (vars.length <= 5 && DICTIONARIES[vars]) {
+      lang = vars;
+      vars = {};
+    } else {
+      fallback = vars;
+      vars = {};
+    }
   }
 
   const activeDict = DICTIONARIES[lang] || DICTIONARIES.en;
@@ -78,11 +86,16 @@ export function t(key, vars = {}, lang = 'en') {
 
     if (text === undefined) {
       // Key does not exist even in English dictionary
-      if (process.env.NODE_ENV !== 'production' && !warnedMissingKeys.has(key)) {
-        console.warn(`[i18n] Missing translation key: "${key}" in language "${lang}" and English fallback.`);
-        warnedMissingKeys.add(key);
+      try {
+        const isDev = typeof process !== 'undefined' ? process.env?.NODE_ENV !== 'production' : false;
+        if (isDev && !warnedMissingKeys.has(key)) {
+          console.warn(`[i18n] Missing translation key: "${key}" in language "${lang}" and English fallback.`);
+          warnedMissingKeys.add(key);
+        }
+      } catch (e) {
+        // Safe in all browser and SSR environments
       }
-      return key;
+      return fallback;
     }
   }
 
