@@ -13,7 +13,7 @@ import {
   Eye,
   RefreshCw
 } from 'lucide-react';
-import { maskAadhaar, formatINR } from '../data/mockStore';
+import { maskAadhaar, formatINR, getDataAccessLog, getDataCorrections, saveDataCorrections } from '../data/mockStore';
 
 export default function PrivacyCenterPage({
   farmers = [],
@@ -25,10 +25,11 @@ export default function PrivacyCenterPage({
   currentRole = 'manager'
 }) {
   const [selectedFarmerId, setSelectedFarmerId] = useState(farmers[0]?.id || '');
-  const [activeTab, setActiveTab] = useState('consent'); // 'consent', 'stored-info', 'explainer', 'correction'
+  const [activeTab, setActiveTab] = useState('consent'); // 'consent', 'stored-info', 'access-log', 'retention', 'explainer', 'correction'
   const [downloadSuccessNotice, setDownloadSuccessNotice] = useState(null);
   const [correctionSubmitted, setCorrectionSubmitted] = useState(false);
   const [correctionNote, setCorrectionNote] = useState('');
+  const [dataAccessLogs, setDataAccessLogs] = useState(getDataAccessLog());
 
   const farmer = farmers.find(f => f.id === selectedFarmerId) || farmers[0];
   const farmerLoans = loans.filter(l => l.farmerId === farmer?.id);
@@ -158,6 +159,14 @@ export default function PrivacyCenterPage({
         </p>
       </div>
 
+      {/* Visible Data Governance Notice */}
+      <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fef08a', borderRadius: '8px', padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <AlertTriangle size={18} style={{ color: '#d97706', flexShrink: 0 }} />
+        <span style={{ fontSize: '0.8125rem', color: '#92400e' }}>
+          <strong>Data Governance Notice:</strong> This prototype stores data in browser LocalStorage, which is NOT sufficient for real banking deployment. A production system needs encrypted server-side storage, access controls, backups, and regulatory compliance review.
+        </span>
+      </div>
+
       {downloadSuccessNotice && (
         <div style={{ padding: '0.875rem', backgroundColor: '#ecfdf5', borderRadius: '8px', border: '1px solid #a7f3d0', color: '#065f46', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <CheckCircle2 size={18} />
@@ -186,18 +195,20 @@ export default function PrivacyCenterPage({
           </div>
 
           {/* Tab Selector */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>
             {[
               { id: 'consent', label: '1. Consent Scopes' },
-              { id: 'stored-info', label: '2. View My Stored Data' },
-              { id: 'explainer', label: '3. Data Usage Explainer' },
-              { id: 'correction', label: '4. Request Correction' }
+              { id: 'stored-info', label: '2. Stored Data' },
+              { id: 'access-log', label: '3. Access Audit' },
+              { id: 'retention', label: '4. Data Retention' },
+              { id: 'explainer', label: '5. Plain Explainer' },
+              { id: 'correction', label: '6. Correction Request' }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  padding: '0.45rem 0.75rem',
+                  padding: '0.45rem 0.625rem',
                   borderRadius: '6px',
                   fontSize: '0.8125rem',
                   fontWeight: 600,
@@ -343,7 +354,71 @@ export default function PrivacyCenterPage({
         </div>
       )}
 
-      {/* TAB 3: DATA USAGE EXPLAINER */}
+      {/* TAB 3: DATA ACCESS AUDIT */}
+      {activeTab === 'access-log' && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>
+            Data Access & Staff Audit Trail for {farmer.name}
+          </h3>
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', marginBottom: '1.25rem' }}>
+            DPDP Transparency Log: Every staff member who opened or processed this borrower file is recorded with timestamp and operational purpose.
+          </p>
+
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Access ID</th>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Accessed By</th>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Role</th>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Timestamp</th>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Operational Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dataAccessLogs.map(log => (
+                  <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '0.5rem 0.75rem', fontWeight: 600, color: '#334155' }}>{log.id}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', fontWeight: 600, color: '#0f172a' }}>{log.accessedBy}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', color: '#64748b' }}>{log.role}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', color: '#64748b' }}>{new Date(log.timestamp).toLocaleString()}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', color: '#15803d', fontWeight: 500 }}>{log.purpose}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: DATA RETENTION SCHEDULE */}
+      {activeTab === 'retention' && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>
+            Regulatory Data Retention Schedule (Demo Standards)
+          </h3>
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', marginBottom: '1.25rem' }}>
+            AgriSahay enforces purpose-bound data minimization in accordance with RBI Master Directions and DPDP Act guidelines.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            {[
+              { category: 'Sanctioned Loan Dockets & Agreements', period: '7 Years post-settlement', basis: 'Statutory Banking Companies Record Retention Rules' },
+              { category: 'Unsanctioned / Rejected Inquiries', period: '3 Years from inquiry date', basis: 'Credit information grievance & fair practices code' },
+              { category: 'Geo-Tagged Field Inspection Photos', period: '5 Years post crop cycle', basis: 'Crop loan monitoring & PMFBY indemnity verification' },
+              { category: 'Withdrawn Consent Records', period: 'Purged within 30 days', basis: 'DPDP Act Right to Erasure / Cessation of processing' }
+            ].map((ret, idx) => (
+              <div key={idx} style={{ padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a' }}>{ret.category}</div>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#15803d', marginTop: '0.25rem' }}>Retention: {ret.period}</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>Legal Basis: {ret.basis}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: DATA USAGE EXPLAINER */}
       {activeTab === 'explainer' && (
         <div className="card" style={{ padding: '1.5rem' }}>
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '1rem' }}>

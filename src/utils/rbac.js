@@ -4,13 +4,15 @@
 export const ROLES = {
   MANAGER: 'Branch Manager',
   OFFICER: 'Agriculture Relationship Officer',
-  ADMIN: 'Operations Admin'
+  ADMIN: 'Operations Admin',
+  RESEARCHER: 'Principal Usability Researcher'
 };
 
 export const ROLE_KEYS = {
   MANAGER: 'manager',
   OFFICER: 'officer',
-  ADMIN: 'admin'
+  ADMIN: 'admin',
+  RESEARCHER: 'researcher'
 };
 
 // Route permissions per role
@@ -26,6 +28,8 @@ export const ROLE_PERMISSIONS = {
       'loans',
       'loan-detail',
       'repayment-planner',
+      'credit-protection',
+      'conflict-center',
       'eligibility',
       'repayments',
       'crop-calendar',
@@ -36,7 +40,8 @@ export const ROLE_PERMISSIONS = {
       'help-desk',
       'notifications',
       'settings',
-      'language-preview'
+      'language-preview',
+      'research-dashboard'
     ],
     canApproveLoan: false,
     canRejectLoan: false,
@@ -60,6 +65,10 @@ export const ROLE_PERMISSIONS = {
       'loans',
       'loan-detail',
       'repayment-planner',
+      'credit-protection',
+      'conflict-center',
+      'fairness-dashboard',
+      'research-dashboard',
       'eligibility',
       'repayments',
       'risk-monitoring',
@@ -100,6 +109,10 @@ export const ROLE_PERMISSIONS = {
       'loans',
       'loan-detail',
       'repayment-planner',
+      'credit-protection',
+      'conflict-center',
+      'fairness-dashboard',
+      'research-dashboard',
       'documents',
       'branches',
       'reports',
@@ -123,6 +136,39 @@ export const ROLE_PERMISSIONS = {
     canCreateFieldVisit: false,
     canCreateFarmer: true,
     canCreateLoan: false
+  },
+
+  [ROLE_KEYS.RESEARCHER]: {
+    allowedRoutes: [
+      'dashboard',
+      'impact-dashboard',
+      'research-dashboard',
+      'fairness-dashboard',
+      'language-preview',
+      'credit-protection',
+      'conflict-center',
+      'innovation-center',
+      'farmers',
+      'farmer-profile',
+      'loans',
+      'loan-detail',
+      'repayment-planner',
+      'risk-simulator',
+      'village-heatmap',
+      'privacy-center',
+      'help-desk',
+      'settings'
+    ],
+    canApproveLoan: false,
+    canRejectLoan: false,
+    canDisburseLoan: false,
+    canDeleteFarmer: false,
+    canAccessAuditLog: false,
+    canManageBranches: false,
+    canAccessReports: true,
+    canCreateFieldVisit: false,
+    canCreateFarmer: false,
+    canCreateLoan: false
   }
 };
 
@@ -135,3 +181,4 @@ export const canPerformAction = (roleKey, action) => {
   const perms = ROLE_PERMISSIONS[roleKey] || ROLE_PERMISSIONS[ROLE_KEYS.MANAGER];
   return Boolean(perms[action]);
 };
+

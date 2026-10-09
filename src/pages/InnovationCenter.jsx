@@ -27,12 +27,15 @@ import {
   Sun,
   Activity
 } from 'lucide-react';
-import { formatINR, maskAadhaar } from '../data/mockStore';
+import { formatINR, maskAadhaar, getResilienceOverrides, saveResilienceOverrides } from '../data/mockStore';
 import {
   calculateResilienceScore,
   calculateHarvestRepaymentSchedule,
   simulateFarmScenario,
-  getClimateSafeSafeguards
+  getClimateSafeSafeguards,
+  computeFairnessAndBiasMetrics,
+  FACTOR_WEIGHTS_EXPLANATIONS,
+  DECISION_GOVERNANCE_NOTICE
 } from '../utils/resilienceEngine';
 
 export default function InnovationCenter({
@@ -51,9 +54,16 @@ export default function InnovationCenter({
   // Selected farmer object
   const farmer = farmers.find(f => f.id === selectedFarmerId) || farmers[0];
 
+  // Officer Overrides State
+  const [overrides, setOverrides] = useState(getResilienceOverrides());
+  const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
+  const [overrideAdjustment, setOverrideAdjustment] = useState(0);
+  const [overrideJustification, setOverrideJustification] = useState('');
+
   // Active calculations
-  const resilienceResult = farmer ? calculateResilienceScore(farmer) : null;
+  const resilienceResult = farmer ? calculateResilienceScore(farmer, overrides) : null;
   const climateSafeguards = farmer ? getClimateSafeSafeguards(resilienceResult.score, farmer.rating.includes('C') ? 'High' : 'Moderate') : [];
+  const biasMetrics = computeFairnessAndBiasMetrics(farmers, loans);
 
   // 1. What-If Simulator State
   const [scenarioType, setScenarioType] = useState('DROUGHT');
@@ -295,7 +305,7 @@ export default function InnovationCenter({
         {/* Feature Tabs Bar */}
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
           {[
-            { id: 'resilience', label: '1. Resilience Score', icon: Award },
+            { id: 'resilience', label: '1. Explainable Resilience Index', icon: Shield },
             { id: 'harvest-planner', label: '2. Harvest Repayment Planner', icon: Calendar },
             { id: 'simulator', label: '3. What-If Farm Simulator', icon: Sliders },
             { id: 'climate-safe', label: '4. Climate Safeguards', icon: ShieldCheck },
@@ -336,105 +346,302 @@ export default function InnovationCenter({
         </div>
       </div>
 
-      {/* TAB 1: FARMER RESILIENCE SCORE */}
+      {/* TAB 1: EXPLAINABLE FARMER RESILIENCE INDEX */}
       {activeTab === 'resilience' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-          {/* Main Score Card */}
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b' }}>
-                  Transparent Metric (Zero Opaque AI)
-                </span>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: '0.25rem 0 0 0' }}>
-                  Farmer Resilience Score
-                </h2>
-                <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '0.25rem' }}>
-                  Borrower: <strong>{farmer.name}</strong> • {farmer.landSize} Acres ({farmer.primaryCrop})
-                </p>
-              </div>
-
-              <div style={{
-                textAlign: 'center',
-                backgroundColor: resilienceResult.badgeBg,
-                color: resilienceResult.badgeColor,
-                padding: '0.75rem 1.25rem',
-                borderRadius: '8px',
-                border: `1px solid ${resilienceResult.badgeColor}33`
-              }}>
-                <div style={{ fontSize: '2rem', fontWeight: 800, lineHeight: 1 }}>{resilienceResult.score}/100</div>
-                <div style={{ fontSize: '0.6875rem', fontWeight: 700, marginTop: '0.25rem', textTransform: 'uppercase' }}>
-                  {resilienceResult.category}
-                </div>
-              </div>
-            </div>
-
-            {/* Score Breakdown Bar */}
-            <div style={{ marginTop: '1.5rem' }}>
-              <div style={{ height: '8px', width: '100%', backgroundColor: '#f1f5f9', borderRadius: '9999px', overflow: 'hidden', display: 'flex' }}>
-                <div style={{ width: `${resilienceResult.score}%`, backgroundColor: resilienceResult.badgeColor, transition: 'width 0.4s ease' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', marginTop: '0.375rem' }}>
-                <span>Vulnerable (0-54)</span>
-                <span>Moderate (55-74)</span>
-                <span>Climate-Safe (75-100)</span>
-              </div>
-            </div>
-
-            {/* Factor Breakdown List */}
-            <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Factor Weight Breakdown:
-              </h3>
-              {resilienceResult.breakdown.map((item, idx) => (
-                <div key={idx} style={{ padding: '0.625rem', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>{item.factor}</span>
-                    <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>
-                      {item.points} / {item.max} pts
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>{item.desc}</div>
-                </div>
-              ))}
-            </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Decision Governance Banner */}
+          <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Info size={18} style={{ color: '#2563eb', flexShrink: 0 }} />
+            <span style={{ fontSize: '0.8125rem', color: '#1e40af' }}>
+              <strong>Decision Support Governance:</strong> {DECISION_GOVERNANCE_NOTICE}
+            </span>
           </div>
 
-          {/* Actionable Recommendations & Interventions */}
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#047857' }}>
-                <Leaf size={18} />
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                  Resilience Enhancement Opportunities
-                </h3>
-              </div>
-              <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '0.5rem', lineHeight: 1.5 }}>
-                Plain-language interventions the relationship officer can suggest to boost the borrower's climate buffer and improve credit terms:
-              </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>
+            {/* Main Index Card */}
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b' }}>
+                    Transparent Agronomic Metric (Zero Black-Box AI)
+                  </span>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: '0.25rem 0 0 0' }}>
+                    Explainable Farmer Resilience Index
+                  </h2>
+                  <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '0.25rem' }}>
+                    Borrower: <strong>{farmer.name}</strong> • {farmer.landSize} Acres ({farmer.primaryCrop})
+                  </p>
+                </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-                {resilienceResult.recommendations.length > 0 ? (
-                  resilienceResult.recommendations.map((rec, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '0.625rem', padding: '0.75rem', backgroundColor: '#ecfdf5', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
-                      <CheckCircle2 size={16} color="#059669" style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <div style={{ fontSize: '0.8125rem', color: '#065f46', lineHeight: 1.4, fontWeight: 500 }}>
-                        {rec}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '8px', color: '#065f46', fontSize: '0.875rem' }}>
-                    Outstanding agricultural resilience! Borrower has verified perennial irrigation, secondary income, and crop diversification. Eligible for preferential interest concession.
+                <div style={{
+                  textAlign: 'center',
+                  backgroundColor: resilienceResult.badgeBg,
+                  color: resilienceResult.badgeColor,
+                  padding: '0.75rem 1.25rem',
+                  borderRadius: '8px',
+                  border: `1px solid ${resilienceResult.badgeColor}33`
+                }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 800, lineHeight: 1 }}>{resilienceResult.score}/100</div>
+                  <div style={{ fontSize: '0.6875rem', fontWeight: 700, marginTop: '0.25rem', textTransform: 'uppercase' }}>
+                    {resilienceResult.category}
                   </div>
+                </div>
+              </div>
+
+              {/* Confidence & Override Indicator */}
+              <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem' }}>
+                <span style={{ color: '#475569' }}>
+                  Data Confidence Level: <strong style={{ color: resilienceResult.confidencePercent >= 80 ? '#15803d' : '#d97706' }}>{resilienceResult.confidencePercent}%</strong>
+                </span>
+                {resilienceResult.isOverridden ? (
+                  <span style={{ color: '#b45309', fontWeight: 600 }}>
+                    ⚡ Officer Adjusted (Orig: {resilienceResult.originalIndex})
+                  </span>
+                ) : (
+                  <span style={{ color: '#15803d', fontWeight: 500 }}>
+                    Rule-Based Verifiable Score
+                  </span>
                 )}
               </div>
+
+              {/* Progress Bar */}
+              <div style={{ marginTop: '1rem' }}>
+                <div style={{ height: '8px', width: '100%', backgroundColor: '#f1f5f9', borderRadius: '9999px', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ width: `${resilienceResult.score}%`, backgroundColor: resilienceResult.badgeColor, transition: 'width 0.4s ease' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', marginTop: '0.375rem' }}>
+                  <span>Vulnerable (0-54)</span>
+                  <span>Moderate (55-74)</span>
+                  <span>Climate-Safe (75-100)</span>
+                </div>
+              </div>
+
+              {/* Override Button */}
+              <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setIsOverrideModalOpen(true)}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '6px',
+                    padding: '0.375rem 0.75rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: '#334155',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⚡ Challenge / Record Officer Override
+                </button>
+              </div>
+
+              {/* Positive and Risk Factors */}
+              <div style={{ marginTop: '1.25rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div style={{ backgroundColor: '#f0fdf4', padding: '0.75rem', borderRadius: '6px', border: '1px solid #bbf7d0' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#166534', marginBottom: '0.375rem' }}>
+                    Positive Agronomic Buffers
+                  </div>
+                  {resilienceResult.positiveFactors.length > 0 ? (
+                    <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.75rem', color: '#14532d' }}>
+                      {resilienceResult.positiveFactors.map((pf, i) => <li key={i}>{pf}</li>)}
+                    </ul>
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>No major buffers logged</span>
+                  )}
+                </div>
+
+                <div style={{ backgroundColor: '#fef2f2', padding: '0.75rem', borderRadius: '6px', border: '1px solid #fecaca' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#991b1b', marginBottom: '0.375rem' }}>
+                    Vulnerability & Risk Factors
+                  </div>
+                  {resilienceResult.riskFactors.length > 0 ? (
+                    <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.75rem', color: '#7f1d1d' }}>
+                      {resilienceResult.riskFactors.map((rf, i) => <li key={i}>{rf}</li>)}
+                    </ul>
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: '#15803d' }}>Low systemic agronomic risk</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Missing Data Impact */}
+              {resilienceResult.missingInformation.length > 0 && (
+                <div style={{ marginTop: '0.75rem', backgroundColor: '#fffbeb', padding: '0.75rem', borderRadius: '6px', border: '1px solid #fef08a' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#92400e', marginBottom: '0.25rem' }}>
+                    Missing Information Affecting Confidence
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.75rem', color: '#78350f' }}>
+                    {resilienceResult.missingInformation.map((mi, i) => <li key={i}>{mi}</li>)}
+                  </ul>
+                </div>
+              )}
             </div>
 
-            <div style={{ marginTop: '1.5rem', padding: '0.875rem', backgroundColor: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.8125rem', color: '#1e40af' }}>
-              <strong>Governance Assurance:</strong> This resilience score is computed transparently using verifiable land, water, and cropping attributes. It never uses black-box algorithms or uninterpretable scores.
+            {/* Factor Weights & Rationale Table */}
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', margin: '0 0 0.5rem 0' }}>
+                7-Factor Weighting Formula & Plain-Language Rationale
+              </h3>
+              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '0 0 1rem 0' }}>
+                Total 100 points. Formula: <em>Index = ∑ (Factor Points)</em>. Transparently calibrated to rural lending risks:
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '420px', overflowY: 'auto' }}>
+                {FACTOR_WEIGHTS_EXPLANATIONS.map((fw, idx) => (
+                  <div key={idx} style={{ padding: '0.625rem', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                      <strong style={{ fontSize: '0.8125rem', color: '#1e293b' }}>{fw.factor} ({fw.maxPoints} pts / {fw.weightPercent})</strong>
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: '#475569', margin: 0, lineHeight: 1.4 }}>
+                      {fw.rationale}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Aggregated Manager Bias Check Panel (Manager / Admin Role Only) */}
+          {(currentRole === 'manager' || currentRole === 'admin') && (
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '1.5rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Shield size={18} style={{ color: '#15803d' }} />
+                    Supervisory Bias & Parity Check (Aggregated Audit View)
+                  </h3>
+                  <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '0.25rem 0 0 0' }}>
+                    Branch Manager inspection tool monitoring systemic scoring differences across cohorts. Privacy threshold (N &lt; 5) strictly applied.
+                  </p>
+                </div>
+              </div>
+
+              {biasMetrics.disparityFlags.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                  {biasMetrics.disparityFlags.map((fl, i) => (
+                    <div key={i} style={{ backgroundColor: '#fffbeb', border: '1px solid #fef08a', borderRadius: '6px', padding: '0.75rem' }}>
+                      <strong style={{ fontSize: '0.8125rem', color: '#92400e' }}>⚠️ {fl.title}: </strong>
+                      <span style={{ fontSize: '0.8125rem', color: '#78350f' }}>{fl.message}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <th style={{ padding: '0.5rem 0.75rem' }}>Dimension</th>
+                      <th style={{ padding: '0.5rem 0.75rem' }}>Cohort</th>
+                      <th style={{ padding: '0.5rem 0.75rem', textAlign: 'center' }}>Borrowers (N)</th>
+                      <th style={{ padding: '0.5rem 0.75rem', textAlign: 'center' }}>Avg Resilience Index</th>
+                      <th style={{ padding: '0.5rem 0.75rem', textAlign: 'center' }}>Loan Approval Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {biasMetrics.cohorts.map((c, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '0.5rem 0.75rem', color: '#64748b' }}>{c.category}</td>
+                        <td style={{ padding: '0.5rem 0.75rem', fontWeight: 600 }}>{c.groupName}</td>
+                        <td style={{ padding: '0.5rem 0.75rem', textAlign: 'center' }}>{c.isSuppressed ? '< 5 (Suppressed)' : c.count}</td>
+                        <td style={{ padding: '0.5rem 0.75rem', textAlign: 'center', fontWeight: 700 }}>{c.avgIndex}</td>
+                        <td style={{ padding: '0.5rem 0.75rem', textAlign: 'center' }}>{c.approvalRate}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Officer Override Modal */}
+          {isOverrideModalOpen && (
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 120, padding: '1rem' }}>
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', maxWidth: '480px', width: '100%', padding: '1.5rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', margin: '0 0 0.5rem 0' }}>
+                  Record Officer Resilience Adjustment
+                </h3>
+                <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '0 0 1rem 0' }}>
+                  Adjust the Explainable Index for {farmer.name} based on on-site verified agronomic grounds.
+                </p>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
+                    Adjusted Index Value (0-100)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={overrideAdjustment || resilienceResult.score}
+                    onChange={(e) => setOverrideAdjustment(Number(e.target.value))}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Original calculated index: {resilienceResult.originalIndex || resilienceResult.score}</span>
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
+                    Mandatory Justification for Audit Log *
+                  </label>
+                  <textarea
+                    rows="3"
+                    value={overrideJustification}
+                    onChange={(e) => setOverrideJustification(e.target.value)}
+                    placeholder="e.g. Physical visit confirmed micro-sprinkler piping installed last week not yet updated in state registry..."
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsOverrideModalOpen(false)}
+                    style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', fontSize: '0.8125rem', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!overrideJustification.trim()) {
+                        alert('Justification comment is mandatory for banking compliance.');
+                        return;
+                      }
+                      const updated = {
+                        ...overrides,
+                        [farmer.id]: {
+                          adjustedScore: overrideAdjustment || resilienceResult.score,
+                          reason: overrideJustification,
+                          adjustedBy: currentRole,
+                          adjustedAt: new Date().toISOString()
+                        }
+                      };
+                      setOverrides(updated);
+                      saveResilienceOverrides(updated);
+                      setIsOverrideModalOpen(false);
+                      if (onLogAudit) {
+                        onLogAudit({
+                          action: 'RESILIENCE_INDEX_OVERRIDE',
+                          userRole: currentRole,
+                          entityId: farmer.id,
+                          entityType: 'Farmer',
+                          previousStatus: String(resilienceResult.originalIndex || resilienceResult.score),
+                          newStatus: String(overrideAdjustment || resilienceResult.score),
+                          notes: `Officer override applied: ${overrideJustification}`
+                        });
+                      }
+                      alert('Resilience adjustment saved and logged to audit trail.');
+                    }}
+                    style={{ padding: '0.5rem 1.25rem', borderRadius: '6px', border: 'none', backgroundColor: '#15803d', color: '#ffffff', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Commit Adjustment
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

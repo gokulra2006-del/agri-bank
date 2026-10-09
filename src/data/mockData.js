@@ -3511,3 +3511,161 @@ export const INITIAL_CLIMATE_SCENARIOS = [
     "desc": "30% sharp surge in diesel, fertilizer, and machinery rental costs."
   }
 ];
+
+// Initial Credit Protection Claims & Insurance Resolution Pipeline (Demo data)
+export const INITIAL_CREDIT_CLAIMS = [
+  {
+    id: "CLM-2026-001",
+    loanId: "LN-101",
+    farmerId: "FAR-001",
+    farmerName: "Basavarajappa Gowda",
+    crop: "Paddy",
+    season: "Kharif 2026",
+    eventType: "Unseasonal Flash Flood & Inundation",
+    eventDate: "2026-08-12",
+    damageCategory: "Severe Inundation (> 50%)",
+    damagePercent: 65,
+    estimatedLossInr: 95000,
+    pmfbyPolicyNo: "PMFBY-KA-2026-88912",
+    insurerName: "Agriculture Insurance Company of India (Simulated)",
+    premiumPaidInr: 2400,
+    claimIntimationDeadline: "2026-08-15",
+    intimationSubmittedAt: "2026-08-13T14:20:00Z",
+    status: "Under Assessment", // 'Reported', 'Documents Collected', 'Submitted (simulated)', 'Under Assessment', 'Settled', 'Rejected', 'Closed'
+    stageIndex: 4, // 0 to 6
+    reschedulingEligible: true,
+    reschedulingRecommended: true,
+    restructuringPlan: "Convert seasonal bullet into 6-month moratorium with Kharif-Rabi rollover",
+    simulatedPhotos: [
+      { name: "plot_waterlogging_marker.jpg", size: "3.2 MB", date: "2026-08-13", note: "Submerged paddy vegetative crop" },
+      { name: "crop_stem_rot_sample.jpg", size: "2.1 MB", date: "2026-08-13", note: "Silt deposit and root rot" }
+    ],
+    demoLocation: "Mandya Sector-3, Survey No. 84/2 (Lat: 12.5228, Lon: 76.8973 - Static Demo)",
+    surveyorNotes: "Joint inspection with Revenue Inspector simulated. Field completely waterlogged due to canal breach.",
+    timeline: [
+      { date: "2026-08-12", title: "Loss Event Detected", note: "Heavy localized precipitation and canal bund overflow", by: "Farmer via Portal" },
+      { date: "2026-08-13", title: "Claim Intimated", note: "Formal intimation logged within 72-hour window", by: "Ramesh Kumar (ARO)" },
+      { date: "2026-08-16", title: "Field Evidence Collected", note: "Photographs and crop damage assessment verified", by: "Mandya Branch Team" },
+      { date: "2026-08-20", title: "Submitted to Insurer (Simulated)", note: "Batch docket transmission to AIC", by: "Suresh Gowda (BM)" },
+      { date: "2026-08-28", title: "Joint Field Survey Completed", note: "Surveyor certified 65% loss; under final assessment", by: "Loss Assessor (Demo)" }
+    ]
+  },
+  {
+    id: "CLM-2026-002",
+    loanId: "LN-106",
+    farmerId: "FAR-006",
+    farmerName: "Chennappa Swamy",
+    crop: "Tomato",
+    season: "Zaid 2026",
+    eventType: "Extreme Heatwave & Pest Infestation (Thrips)",
+    eventDate: "2026-07-28",
+    damageCategory: "Moderate Partial Loss (30-50%)",
+    damagePercent: 40,
+    estimatedLossInr: 48000,
+    pmfbyPolicyNo: "PMFBY-KA-2026-44102",
+    insurerName: "HDFC ERGO General Insurance (Simulated)",
+    premiumPaidInr: 1800,
+    claimIntimationDeadline: "2026-07-31",
+    intimationSubmittedAt: "2026-07-30T10:15:00Z",
+    status: "Documents Collected",
+    stageIndex: 2,
+    reschedulingEligible: true,
+    reschedulingRecommended: true,
+    restructuringPlan: "Grant 45-day extension to align with second picking schedule",
+    simulatedPhotos: [
+      { name: "tomato_flower_drop.jpg", size: "1.8 MB", date: "2026-07-29", note: "Heat stress flower desiccation" }
+    ],
+    demoLocation: "Mandya North, Survey No. 112/1 (Lat: 12.5401, Lon: 76.9120 - Static Demo)",
+    surveyorNotes: "Severe leaf curl and fruit drop. Farmer applied micronutrients; second harvest expected.",
+    timeline: [
+      { date: "2026-07-28", title: "Loss Event Detected", note: "Temperature spike above 41°C for 6 consecutive days", by: "Farmer via Field Officer" },
+      { date: "2026-07-30", title: "Claim Intimated", note: "Intimation recorded in AgriSahay Credit Protection Center", by: "Ramesh Kumar (ARO)" },
+      { date: "2026-08-04", title: "Documents Verified", note: "Land revenue patta and sowing certificate attached", by: "Mandya Branch" }
+    ]
+  }
+];
+
+// Offline Sync Conflict Test Scenarios (Simulated conflict center)
+export const INITIAL_SYNC_CONFLICTS = [
+  {
+    id: "CONF-001",
+    entityType: "Farmer Profile",
+    entityId: "FAR-001",
+    entityTitle: "Basavarajappa Gowda - Land & Irrigation Record",
+    conflictType: "Concurrent Dual-Officer Edit Collision",
+    detectedAt: "2026-09-02T08:45:00Z",
+    deviceLabel: "Field Tablet Tab-04 (Offline Mode)",
+    localUser: "Ramesh Kumar (Relationship Officer)",
+    remoteUser: "Suresh Gowda (Branch Manager - Central Server)",
+    localData: {
+      irrigationType: "Borewell + Drip Subsidized",
+      primaryCrop: "Paddy (IR-64)",
+      landAreaAcres: 3.5,
+      notes: "Farmer completed drip piping installation on south parcel."
+    },
+    remoteData: {
+      irrigationType: "Canal Perennial",
+      primaryCrop: "Paddy (Sona Masoori)",
+      landAreaAcres: 3.2,
+      notes: "Central land registry sync reported canal distributary link."
+    },
+    status: "Conflict" // 'Pending', 'Syncing', 'Synced', 'Failed', 'Conflict'
+  },
+  {
+    id: "CONF-002",
+    entityType: "Field Inspection Visit",
+    entityId: "VIS-2026-089",
+    entityTitle: "Chennappa Swamy - Pre-Harvest Inspection",
+    conflictType: "Duplicate Visit Submission (Checksum Collision)",
+    detectedAt: "2026-09-03T11:20:00Z",
+    deviceLabel: "Field Mobile Mob-02",
+    localUser: "Ramesh Kumar (Relationship Officer)",
+    remoteUser: "System Automated Queue",
+    localData: {
+      visitDate: "2026-09-03",
+      cropStage: "Flowering & Fruit Setting",
+      pestObserved: "Low Thrips presence controlled by neem spray",
+      recommendation: "Approve second tranche disbursal"
+    },
+    remoteData: {
+      visitDate: "2026-09-03",
+      cropStage: "Flowering & Fruit Setting",
+      pestObserved: "Low Thrips presence controlled by neem spray",
+      recommendation: "Approve second tranche disbursal"
+    },
+    status: "Conflict"
+  }
+];
+
+// Translation Module Review Registry (Initial Quality Baseline)
+// Strict rule: Nothing marked above 'Machine-assisted draft' unless a human reviewer record exists!
+export const INITIAL_TRANSLATION_REVIEWS = [
+  {
+    lang: "en",
+    module: "All Modules",
+    reviewStatus: "Approved for deployment", // en is master source
+    reviewerName: "AgriSahay Product Architecture Team",
+    reviewerCredentials: "Lead Banking Specialist",
+    reviewDate: "2026-09-01",
+    notes: "Authoritative English terminology matching RBI/NABARD guidelines."
+  },
+  {
+    lang: "hi",
+    module: "Navigation & Topbar",
+    reviewStatus: "Native-speaker reviewed",
+    reviewerName: "Dr. Arvind Sharma",
+    reviewerCredentials: "Agricultural Economics Faculty, IARI New Delhi",
+    reviewDate: "2026-09-05",
+    notes: "Verified agricultural banking nomenclature (KCC, Bandhak, Fasali Rin)."
+  },
+  {
+    lang: "kn",
+    module: "Farmers & Field Officer Mode",
+    reviewStatus: "Field-tested",
+    reviewerName: "Mahadeva Swamy",
+    reviewerCredentials: "Former Lead Bank Officer, Mandya District",
+    reviewDate: "2026-09-10",
+    notes: "Field-tested with 12 local dairy farmers; term 'ಫಸಲು ಸಾಲ' (crop loan) widely accepted."
+  }
+];
+

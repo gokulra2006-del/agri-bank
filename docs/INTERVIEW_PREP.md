@@ -84,3 +84,36 @@
 
 ### Q26: How can branch managers verify translation completeness before deploying to a new rural region?
 **Answer:** We built a dedicated **Language Preview & Coverage** portal (`/language-preview`) accessible directly from Settings. It programmatically computes the exact percentage of completed keys against the English master, flags missing keys, shows review status badges, and provides an interactive side-by-side component inspector across all 10 languages.
+
+---
+
+### Q27: What is the official research title and core objective of AgriSahay?
+**Answer:** The research title is *"AgriSahay: An Explainable, Offline-First, Multilingual and Climate-Aware Agriculture Lending Platform for Inclusive Rural Credit Delivery"*. The research objective is to empirically evaluate whether combining explainable agronomic scoring, offline queueing with 3-way conflict reconciliation, native Indic speech accessibility, and harvest-aligned cash flow planning reduces origination latency and borrower exclusion compared to traditional paper-and-branch procedures.
+
+### Q28: How does your tamper-evident audit logging work, and why do you emphasize it is a prototype demonstration?
+**Answer:** Each audit entry calculates a hash that incorporates the hash of the immediately preceding record ($H_i = \text{Hash}(H_{i-1} \mathbin{\Vert} \text{Record}_i)$). The system can trace the chain from the genesis hash and pinpoint any unauthorized back-edits or row insertions. We explicitly label this as a prototype demonstration because true immutability in production banking requires immutable write-once server-side append storage, hardware security modules (HSM), digital PKI signatures, and external regulatory auditing.
+
+### Q29: How did you implement Brooke (1986) System Usability Scale (SUS) scoring?
+**Answer:** We strictly follow Brooke's standard 10-item Likert questionnaire. Odd items ($Q_1, Q_3, Q_5, Q_7, Q_9$) contribute $(\text{Score} - 1)$, while even items ($Q_2, Q_4, Q_6, Q_8, Q_{10}$) contribute $(5 - \text{Score})$. The sum of these 10 values is multiplied by $2.5$ to yield an industry-standard composite score from $0$ to $100$. Our target benchmark is $\ge 75$ (Grade A, Above Average).
+
+### Q30: How does your platform enforce privacy in small rural borrower cohorts?
+**Answer:** Under the Digital Personal Data Protection (DPDP) Act 2023, reporting aggregate statistics on very small cohorts in a village can de-anonymize marginal farmers. We enforce a $k$-anonymity privacy threshold ($N < 5$): any demographic slice or report bucket with fewer than 5 records is automatically suppressed and labeled `[Suppressed: N < 5]`.
+
+### Q31: How does your offline synchronization engine handle concurrent dual-officer collisions?
+**Answer:** When two officers edit the same farmer record or application concurrently (e.g. one in the field and one at the branch), naive last-write-wins approaches destroy data. AgriSahay detects version and hash collisions upon reconnection and routes the conflicting records to the **Offline Conflict Center** (`/conflict-center`), where officers perform deterministic 3-way reconciliation (Base vs. Field vs. Branch) with mandatory justification comments logged into the audit chain.
+
+### Q32: Why did you implement audio text-to-speech using the native Web Speech API instead of cloud services?
+**Answer:** The browser-native Web Speech API (`window.speechSynthesis`) requires zero external cloud network round-trips, zero API keys, and transmits zero farmer data over the internet, preserving borrower privacy. We map each of our 10 supported Indian languages to their standard Indic BCP-47 tags (e.g. `kn-IN`, `hi-IN`, `ta-IN`) and calibrate speech rate to $0.95\times$ for clear rural comprehension.
+
+### Q33: How does the Credit Protection Center link PMFBY loss intimations with loan restructuring?
+**Answer:** Under PMFBY guidelines, localized flood or drought losses must be intimated within 72 hours. Our Credit Protection Center logs the intimation immediately on mobile with simulated GPS and plot photos, starts the 72-hour countdown, tracks survey progress, and provides a direct, policy-compliant pipeline into RBI-authorized loan restructuring (moratorium extension and tenure recalibration) so farmers avoid falling into default through no fault of their own.
+
+### Q34: What is the Four-Fifths (80%) Rule in your Fairness & Bias Audit dashboard?
+**Answer:** We implement the EEOC standard four-fifths rule to monitor whether vulnerable groups (marginal landholders, female borrowers, rainfed cultivators) face disparate impact in loan sanctioning. If the approval rate of a vulnerable group is less than $80\%$ of the benchmark cohort's rate, the dashboard triggers an amber Disparity Alert, prompting credit committee review without using opaque black-box AI logic.
+
+### Q35: How do your multi-scenario monthly cash flow projections prevent farmer distress?
+**Answer:** Instead of assuming a single optimistic crop income, our engine models Expected Baseline, Best-Case (bumper yield), and Worst-Case (climate shock or price drop) month-by-month cash flow curves. It links input expenditure timings (sowing, fertilizers) with bullet repayment timing, proving whether a borrower has adequate headroom or requires insurance and liquidity buffers during the vegetative gestation months.
+
+### Q36: How do you handle discretionary officer score overrides without compromising governance?
+**Answer:** Field officers possess vital qualitative agronomic insights that raw records may omit (e.g., verifying a newly installed drip irrigation kit during an unannounced visit). AgriSahay permits officers to enter a discretionary score override, but strictly requires an audit trail: recording the officer's name, role, timestamp, original score, adjusted score, and a mandatory detailed textual justification ($> 10$ characters) chained into the audit log. Overridden records are permanently bannered to alert senior credit underwriters.
+

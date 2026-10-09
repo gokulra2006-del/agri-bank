@@ -138,8 +138,34 @@ export default function Topbar({
             <option value="manager">Branch Manager</option>
             <option value="officer">Relationship Officer (Field)</option>
             <option value="admin">Operations Admin</option>
+            <option value="researcher">Field Researcher / Evaluator</option>
           </select>
         </div>
+
+        {/* Accessibility & Voice Settings Button */}
+        {onOpenAccessibility && (
+          <button
+            onClick={onOpenAccessibility}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              backgroundColor: '#f1f5f9',
+              border: '1px solid #cbd5e1',
+              borderRadius: '0.375rem',
+              padding: '0.3rem 0.5rem',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: '#334155',
+              cursor: 'pointer'
+            }}
+            title="Accessibility, Text Scaling & Voice Settings"
+            aria-label="Open Accessibility and Voice Settings"
+          >
+            <span>♿</span>
+            <span className="hidden-mobile">A11y</span>
+          </button>
+        )}
 
         {/* Language Selector (10 Indian Languages) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -270,7 +296,7 @@ export default function Topbar({
             >
               <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#0f172a', display: 'block' }}>Gokul Sharma</span>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>gokul.s@ujjivan.agri.demo</span>
+                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>gokul.s@agribank.demo</span>
                 <div style={{ marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   <ShieldCheck size={12} color="#15803d" />
                   <span style={{ fontSize: '0.65rem', color: '#15803d', fontWeight: 600 }}>Role: Agri Credit Trainee</span>

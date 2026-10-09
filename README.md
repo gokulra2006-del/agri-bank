@@ -1,19 +1,61 @@
-# AgriSahay – Agriculture Loan and Farmer Support System
+# AgriSahay: An Explainable, Offline-First, Multilingual and Climate-Aware Agriculture Lending Platform for Inclusive Rural Credit Delivery
 
-> **Academic Prototype Notice:** This project was developed as a placement showcase for **Ujjivan Small Finance Bank (Agriculture Banking Department)**. It is an academic demonstration prototype and is **not connected to a live banking system or real customer database**. All data displayed is simulated demo data.
+> **Academic Research & Placement Prototype Notice:**  
+> This project is an applied academic research prototype developed for rural banking and placement showcase evaluation in Small Finance Bank agricultural credit operations. It is **not connected to a live banking system, real customer database, or external financial network**. All borrower profiles, land titles, and financial records are simulated demo data.
 
 ---
 
-## 🌾 Project Overview
+## 🌾 Research Problem & Objective
 
-Traditional retail banking products impose rigid monthly EMIs and conventional credit scoring onto seasonal agricultural borrowers. When monsoons delay, floods strike, or mandi commodity prices fluctuate, farmers face technical defaults despite fundamentally viable crops.
+Smallholder farmers in rainfed and semi-arid tracts face compounding structural barriers to institutional credit:
+1. **Opaque and Inflexible Credit Underwriting:** Standard credit scoring relies on urban-centric bureau history and rigid monthly Equal Monthly Installment (EMI) schedules that disregard the seasonal gestation of agricultural cash flows.
+2. **Connectivity Shadow Zones:** Over 60% of rural farm visits occur in low-connectivity or zero-network shadow zones, resulting in paper-based duplicate origination and synchronization collisions.
+3. **Linguistic Exclusion:** Banking interfaces are predominantly English or formal state-register vernaculars that use complex financial terminology inaccessible to marginal agriculturalists.
+4. **Climate Exposure & Delayed Claim Settlements:** Increasing frequency of unseasonal rains and localized dry spells triggers crop failure, while paper-based loss intimation under PMFBY often exceeds the mandatory 72-hour window.
 
-**AgriSahay** bridges this systemic gap. Built from the ground up for rural agriculture credit operations, it introduces:
-- **Transparent 7-Factor Farmer Resilience Scoring** (replacing black-box credit models)
-- **Harvest-Linked Repayment Planning** (matching repayment schedules to crop maturity and mandi sales)
-- **Four-Eye Maker-Checker Governance** (strict role-based separation between field sourcing and loan sanctioning)
-- **Offline-First Field Mobility** with comprehensive 10-language regional localization (English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, Malayalam, Gujarati, Punjabi)
-- **DPDP Act Compliance & Data Privacy** (strict Aadhaar masking and anonymized village heatmaps)
+**AgriSahay** bridges this gap with an explainable, offline-first, multilingual, and climate-aware digital architecture designed to evaluate whether these barriers can be mitigated empirically.
+
+---
+
+## 🔬 Research Questions & Protocol (RQ1 – RQ7)
+
+| ID | Research Question | Primary Metric | Target Benchmark |
+| :--- | :--- | :--- | :--- |
+| **RQ1** | **Task Efficiency:** Does a guided, offline-first digital field workflow reduce end-to-end loan application origination time compared to traditional paper-and-branch procedures? | Elapsed task completion time (seconds) | $\ge 40\%$ reduction across 6 core tasks |
+| **RQ2** | **Explainability & Transparency:** Does the Explainable Farmer Resilience Index improve credit officer confidence and borrower comprehension over opaque scorecards? | 5-point Likert comprehension score & override justification audit | Mean rating $\ge 4.2 / 5.0$ |
+| **RQ3** | **Repayment Feasibility:** How does harvest-linked bullet/tranche repayment scheduling alter projected borrower default probability under simulated climate stress? | Cumulative monthly cash flow surplus & deficit frequency | Zero mid-season cash deficit months |
+| **RQ4** | **Linguistic Accessibility:** Can native Indic scripts (10 languages) combined with Web Speech synthesis reduce borrower cognitive load and comprehension friction? | Reading & audio comprehension check score | $\ge 85\%$ accuracy on core financial terms |
+| **RQ5** | **Offline Conflict Resolution:** Can deterministic 3-way reconciliation prevent data loss during multi-officer field data synchronization? | Conflict resolution success rate & zero unhandled collisions | $100\%$ atomic merge completion |
+| **RQ6** | **Credit Protection Acceleration:** Does mobile-first PMFBY loss intimation with simulated GPS/photo verification reduce claim initiation latency within the 72-hour statutory deadline? | Intimation submission timestamp delta | $100\%$ intimated within $< 48$ hours |
+| **RQ7** | **System Usability:** What is the standardized System Usability Scale (SUS) score of the platform across diverse user cohorts (officers, managers, farmers)? | Brooke (1986) 10-item composite SUS score | SUS $\ge 75$ (Grade A, Above Average) |
+
+---
+
+## 🏛️ System Architecture & Technology Stack
+
+```mermaid
+flowchart TD
+    User["Field Officer / Branch Manager / Farmer"] --> ReactApp["React 18 / Vite 5 SPA"]
+    ReactApp --> A11y["Accessibility & Web Speech Engine"]
+    ReactApp --> i18n["10-Language Translation Engine"]
+    ReactApp --> RBAC["RBAC Engine (Four-Eye Governance)"]
+    RBAC --> CoreModules["Farmer / Loan / Credit Protection Modules"]
+    CoreModules --> OfflineEngine["Offline Queue & 3-Way Conflict Center"]
+    CoreModules --> AuditChain["Tamper-Evident Hash-Chained Audit Trail"]
+    CoreModules --> Store["MockStore Repository (v5.0)"]
+```
+
+| Component Layer | Technology Implementation | Key Architectural Properties |
+| :--- | :--- | :--- |
+| **Frontend Framework** | React 18 & Vite 5 | SPA with ES modules, route-level code splitting (`React.lazy`), fast HMR |
+| **Styling & Design System** | Pure CSS & Indic Font Stack | Professional light theme, zero heavy CSS frameworks, WCAG 2.1 AA line-height (`1.6`) |
+| **Audio Accessibility** | Browser Web Speech API | Native `speechSynthesis`, zero cloud voice APIs, BCP-47 Indic tags, rural analogies |
+| **Multilingual Core** | Zero-Dependency i18n Core | Static pre-compiled dictionaries for 10 languages, 3-tier fallback chain |
+| **Datastore & State** | Client-Side MockStore (v5.0) | Schema migration, JSON corruption auto-healing, and 24 domain stores |
+| **Governance & RBAC** | RBAC Engine | Maker-Checker roles: Branch Manager, Relationship Officer, Operations Admin, Researcher |
+| **Audit Security** | Cryptographic Hash Chaining | Forward-chained audit trail ($H_i = \text{Hash}(H_{i-1} \mathbin{\Vert} \text{Record}_i)$) with tamper verification |
+| **Privacy & Masking** | Regex Masking Engine | Guaranteed Aadhaar masking (`XXXX-XXXX-1234`), $k$-anonymity suppression ($N < 5$) |
+| **Testing Harness** | Node.js Test Suite | 98 passing unit tests across resilience, climate, translation, and governance |
 
 ---
 
@@ -23,146 +65,92 @@ Traditional retail banking products impose rigid monthly EMIs and conventional c
 - Node.js (v18.0.0 or higher)
 - npm (v9.0.0 or higher)
 
-### Installation & Run
+### Run Unit Tests
 ```bash
-# Clone the repository
-git clone https://github.com/gokulra2006-del/agri-bank.git
-cd agri-bank
-
-# Install project dependencies
-npm install
-
-# Run automated unit test suite (48 assertions across resilience, climate & i18n)
 npm test
+```
+*Executes all 98 automated unit tests across 4 test suites.*
 
-# Launch Vite development server
+### Run Development Server
+```bash
 npm run dev
 ```
-
-Open your browser to: **`http://localhost:5173/`**
+Open **`http://localhost:5173/`** in your browser.
 
 ### Production Build
 ```bash
 npm run build
 ```
-Generates an optimized, code-split bundle in `dist/` with `React.lazy` chunks.
+Generates an optimized, code-split production bundle in `dist/`.
 
 ---
 
-## 🏛️ System Architecture & Technology Stack
+## 🌟 Core Domain Innovations
 
-| Layer | Technology / Implementation | Details |
-| :--- | :--- | :--- |
-| **Frontend Framework** | React 18 & Vite 5 | SPA with ES modules, fast HMR, and dynamic code splitting |
-| **Styling & Design System** | Pure CSS & Indic Font Stack | Professional light theme, zero heavy UI frameworks, native Indic typography |
-| **Icons & Visuals** | Lucide React | High-contrast, lightweight SVG icon system |
-| **State & Datastore** | Client-Side MockStore (v4.0) | Schema migration, JSON corruption auto-healing, and 17 domain stores |
-| **Governance & Security** | RBAC Engine | Four-Eye principle: Branch Manager (BM), Relationship Officer (RO), Operations Admin (OA) |
-| **Privacy & Masking** | Regex Masking Engine | Guaranteed Aadhaar masking (`XXXX-XXXX-1234`) across views & exports |
-| **Multilingual Engine** | Zero-Dependency i18n Core | Static pre-compiled dictionaries across 10 Indian languages with fallback chain |
-| **Automated Testing** | Node.js Test Suites | Headless execution: `resilienceEngine.test.js`, `climatePlatform.test.js`, `i18n.test.js` |
+### 1. Explainable Farmer Resilience Index
+Calculates a transparent score ($0-100$) based on 7 weighted agricultural factors:
+- **Irrigation Access (20 pts):** Perennial canal/borewell vs. rainfed
+- **Crop Diversity (15 pts):** Polyculture vs. monoculture
+- **Climate Exposure (15 pts):** Regional monsoon departure index
+- **Credit & Leverage (20 pts):** Debt-to-income margin and on-time track record
+- **Allied Dairy Income (15 pts):** Secondary livestock cash-flow buffer
+- **Soil & Agronomy (10 pts):** Verified Soil Health Card nutrient protocol
+- **Insurance Protection (5 pts):** Active PMFBY enrollment
 
----
+*Includes confidence penalties for missing fields, officer discretionary score overrides with mandatory text justifications, and the required governance notice: Decision support only. A human loan officer must review and decide.*
 
-## 🌐 10-Language Full-Page Translation System
+### 2. Multi-Scenario Harvest Repayment Cash-Flow Curves
+Generates month-by-month cash flow projections connecting crop stages (Land Prep, Basal Sowing, Weeding, Harvesting) to post-harvest APMC Mandi realization across:
+- **Expected Baseline:** Standard historical yield and price
+- **Best-Case (+20% yield, -5% expenses):** Bumper harvest realization
+- **Worst-Case (-35% yield, +20% expenses):** Localized climate shock / price crash
 
-AgriSahay features a zero-reload, full-page translation architecture supporting 10 major Indian languages:
-1. **English** (`en`)
-2. **हिन्दी – Hindi** (`hi`)
-3. **ಕನ್ನಡ – Kannada** (`kn`)
-4. **தமிழ் – Tamil** (`ta`)
-5. **తెలుగు – Telugu** (`te`)
-6. **मराठी – Marathi** (`mr`)
-7. **বাংলা – Bengali** (`bn`)
-8. **മലയാളം – Malayalam** (`ml`)
-9. **ગુજરાતી – Gujarati** (`gu`)
-10. **ਪੰਜਾਬੀ – Punjabi** (`pa`)
+### 3. Credit Protection Center (PMFBY & Restructuring)
+Integrates a complete 8-stage loss-to-restructuring pipeline:
+- 72-hour countdown timer for localized disaster intimation
+- Mobile loss logging with simulated GPS coordinates and crop condition photos
+- Independent surveyor inspection tracking
+- Direct transition into RBI-authorized loan restructuring (moratorium extension & tenure recalibration)
 
-### Multilingual Architectural Guarantees:
-- **Instant Full-Page Switching:** Changing language in the Topbar translates the entire UI immediately via React Context (`LanguageProvider`), with no page reload.
-- **Static Dictionaries (No Cloud APIs):** Zero external translation APIs, zero API keys, and zero runtime machine translation latency.
-- **Bulletproof Fallback Chain:** If a key is absent in a regional dictionary, it seamlessly falls back to English (`en`), and finally to the path string with development warnings.
-- **Protected Data Invariant:** Financial tokens (`₹` Indian Rupee), Aadhaar masks (`XXXX-XXXX-1234`), loan identifiers, farmer personal names, and village names are never corrupted by translation routines.
-- **Native Indic Typography:** Built-in font fallbacks for Devanagari, Kannada, Tamil, Telugu, Bengali, Malayalam, Gujarati, and Gurmukhi with adjusted line-height (`1.6`) to prevent vowel-sign (matra) clipping.
-- **Language Preview Portal (`/language-preview`):** Dedicated matrix dashboard tracking translation coverage percentages, missing keys, and native speaker verification statuses.
+### 4. Offline Conflict Reconciliation Center
+Deterministic 3-way reconciliation (Base vs. Field vs. Branch):
+- Dual-officer collision simulator
+- Side-by-side visual diff highlighting
+- Field-by-field merge options with mandatory officer justification comments
+- Exponential backoff retry engine for intermittent network reconnection
 
----
+### 5. Research & Usability Evaluation Lab
+- Precision stopwatch timers for standard benchmark tasks (`T1` through `T6`)
+- Standard Brooke (1986) 10-item System Usability Scale (SUS) survey
+- Traditional manual baseline comparison with automated percentage time reduction
+- Optional bannered sample dataset with one-click purge
+- DPDP differential privacy ($N < 5$ suppression)
 
-## 🌟 Key Features & Domain Innovations
-
-### 1. Transparent Farmer Resilience Scoring
-Evaluates 7 objective agronomic pillars totaling 100 points:
-- **Irrigation Access (20 pts):** Perennial borewell/canal vs. seasonal vs. rainfed
-- **Crop Diversity (15 pts):** Multi-cropping vs. monoculture
-- **Allied Dairy Income (15 pts):** Secondary livestock revenue stability
-- **Repayment Track Record (15 pts):** On-time payment history
-- **Soil Health (15 pts):** Soil health testing and organic carbon metrics
-- **Insurance Coverage (10 pts):** Active PMFBY enrollment
-- **Rainfall Volatility Exposure (10 pts):** Regional monsoon departure index
-
-### 2. Harvest-Linked Repayment Planner
-Replaces standard monthly EMIs with schedules tied to crop sowing date, vegetative duration, harvest date, and APMC mandi clearing buffers (+15 days). Provides transparent risk comparisons illustrating how bullet repayment suppresses NPA formation.
-
-### 3. What-If Farm Shock Simulator
-Allows credit underwriters to simulate shocks before disbursal:
-- Severe Drought (-45% yield)
-- Delayed Monsoon (-20% yield)
-- Mandi Price Crash (-30% realization)
-- Pest Outbreak (-35% yield)
-- Input Cost Inflation (+25% expense)
-Evaluates debt servicing capacity and suggests mitigating safeguards.
-
-### 4. Field Officer Mode (Offline-First)
-Designed for last-mile relationship officers traveling to remote villages. Includes:
-- High-touch mobile interface
-- Local offline transaction queue with sync counter
-- Smart Notes Assistant with multilingual agronomic keyword extraction
-- Direct GPS and crop stage capture
-
-### 5. Regulatory Audit Log & DPDP Privacy Center
-- **Audit Trail:** Immutable, searchable log tracking every creation, edit, sanction, and review with user persona and timestamp.
-- **Privacy Center:** Explicit DPDP Act consent log, data portability passport export, and village-level anonymized heatmaps.
+### 6. 10-Language Full-Page Translation & Accessibility
+Supports: English, हिन्दी (Hindi), ಕನ್ನಡ (Kannada), தமிழ் (Tamil), తెలుగు (Telugu), मराठी (Marathi), বাংলা (Bengali), മലയാളം (Malayalam), ગુજરાતી (Gujarati), and ਪੰਜਾਬੀ (Punjabi).
+- *Linguistic Validation Status Notice: All 10 languages have complete dictionary coverage. Selected translations require native-speaker and field usability validation before production deployment.*
+- Web Speech API text-to-speech with Indic BCP-47 tags
+- Simplified agrarian analogies for 8 core banking concepts
+- Text size scaling (Normal, Large, Extra Large) and High-Contrast mode
 
 ---
 
-## 🧪 Automated Test Suite
+## 📚 Complete Project Documentation
 
-AgriSahay includes an automated test harness covering core banking algorithms and i18n rules:
-
-```bash
-npm test
-```
-
-**Results: 48 Tests Passed (0 Failures)**
-- ✅ RBAC maker-checker loan approval restrictions
-- ✅ Resilience Score mathematical weighting and categorization
-- ✅ Harvest repayment date calculations
-- ✅ Aadhaar masking across 12-digit and edge-case inputs
-- ✅ What-If stress test yield reduction formulas
-- ✅ Multilingual agronomic keyword detection (English & Kannada)
-- ✅ Early financial stress tier classification
-- ✅ 10 regional dictionary compilation & validation
-- ✅ English fallback chain for missing keys
-- ✅ Dynamic token interpolation (`{count}`, `{name}`, `{date}`)
-- ✅ Coverage percentage calculations
-- ✅ Absolute preservation of Aadhaar masking & ₹ currency symbols across translations
-
----
-
-## 📚 Project Documentation
-
-Detailed guides and presentation materials are located in the [`docs/`](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs) directory:
+Detailed research, architecture, and governance guides:
+- [Research Protocol (RQ1 – RQ7)](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/RESEARCH_PROTOCOL.md)
+- [Empirical Evaluation Plan & SUS Methodology](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/EVALUATION_PLAN.md)
+- [Algorithmic Fairness & Bias Governance](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/FAIRNESS_AND_BIAS.md)
+- [Accessibility & Rural Interface Guidelines](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/ACCESSIBILITY.md)
+- [Offline-First Architecture & Conflict Reconciliation](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/OFFLINE_SYNC_DESIGN.md)
+- [Data Governance, DPDP & Audit Trail](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DATA_GOVERNANCE.md)
+- [36 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
+- [5-Minute & 10-Minute Live Demo Scripts](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEMO_SCRIPT.md)
 - [10-Language i18n Architecture Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/I18N_ARCHITECTURE.md)
 - [Agricultural Banking Translation Glossary](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/TRANSLATION_GLOSSARY.md)
-- [Architecture & Data Specification](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/ARCHITECTURE.md)
-- [5-Minute & 10-Minute Live Demo Scripts](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEMO_SCRIPT.md)
-- [26 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
-- [10-Slide Presentation Deck Outline](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/PRESENTATION_OUTLINE.md)
-- [Cloud Deployment Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/DEPLOY.md)
 
 ---
 
 ## 📄 License & Academic Disclaimer
 
 This project is an **academic prototype** created strictly for demonstration, evaluation, and educational purposes. It is not affiliated with, endorsed by, or connected to Ujjivan Small Finance Bank's live core banking infrastructure. All customer identities, land records, and account numbers are simulated demo artifacts.
-

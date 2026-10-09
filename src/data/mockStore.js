@@ -14,6 +14,9 @@ import {
   INITIAL_VILLAGE_HEATMAPS,
   INITIAL_ASSISTANCE_TRACKER,
   INITIAL_CLIMATE_SCENARIOS,
+  INITIAL_CREDIT_CLAIMS,
+  INITIAL_SYNC_CONFLICTS,
+  INITIAL_TRANSLATION_REVIEWS,
   CROP_CALENDAR,
   GOV_SCHEMES
 } from './mockData.js';
@@ -34,10 +37,22 @@ const STORAGE_KEYS = {
   AUDIT_LOGS: 'agrisahay_audit_logs',
   ASSISTANCE_TRACKER: 'agrisahay_assistance_tracker',
   VILLAGE_HEATMAPS: 'agrisahay_village_heatmaps',
-  CONSENT_RECORDS: 'agrisahay_consent_records'
+  CONSENT_RECORDS: 'agrisahay_consent_records',
+  CREDIT_CLAIMS: 'agrisahay_credit_protection_claims',
+  CROP_LOSS_EVENTS: 'agrisahay_crop_loss_events',
+  SYNC_CONFLICTS: 'agrisahay_sync_conflicts',
+  STUDY_PARTICIPANTS: 'agrisahay_study_participants',
+  STUDY_TIMINGS: 'agrisahay_study_task_timings',
+  STUDY_SURVEYS: 'agrisahay_study_surveys',
+  STUDY_SAMPLE_ACTIVE: 'agrisahay_study_sample_active',
+  TRANSLATION_REVIEWS: 'agrisahay_translation_reviews',
+  RESILIENCE_OVERRIDES: 'agrisahay_resilience_overrides',
+  ACCESSIBILITY_SETTINGS: 'agrisahay_accessibility_settings',
+  DATA_ACCESS_LOG: 'agrisahay_data_access_log',
+  DATA_CORRECTION_REQUESTS: 'agrisahay_data_correction_requests'
 };
 
-const CURRENT_VERSION = '4.0';
+const CURRENT_VERSION = '5.0';
 
 // Safe storage initialization & migration
 const checkStorageMigration = () => {
@@ -45,12 +60,6 @@ const checkStorageMigration = () => {
     if (typeof localStorage === 'undefined') return;
     const version = localStorage.getItem(STORAGE_KEYS.VERSION);
     if (!version || version !== CURRENT_VERSION) {
-      // Version upgrade: Flush legacy caches to load rich 4.0 schema
-      Object.values(STORAGE_KEYS).forEach(k => {
-        try {
-          localStorage.removeItem(k);
-        } catch (e) { /* ignore */ }
-      });
       localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_VERSION);
     }
   } catch (e) {
@@ -90,6 +99,18 @@ const setStorageItem = (key, val) => {
   }
 };
 
+export const STORES = { ...STORAGE_KEYS };
+
+export const loadStore = (key, defaultVal = null) => {
+  const storageKey = STORAGE_KEYS[key] || key;
+  return getStorageItem(storageKey, defaultVal);
+};
+
+export const updateStore = (key, val) => {
+  const storageKey = STORAGE_KEYS[key] || key;
+  setStorageItem(storageKey, val);
+};
+
 export const getFarmers = () => getStorageItem(STORAGE_KEYS.FARMERS, INITIAL_FARMERS);
 export const saveFarmers = (farmers) => setStorageItem(STORAGE_KEYS.FARMERS, farmers);
 
@@ -126,13 +147,91 @@ export const saveVillageHeatmaps = (maps) => setStorageItem(STORAGE_KEYS.VILLAGE
 export const getConsentRecords = () => getStorageItem(STORAGE_KEYS.CONSENT_RECORDS, {});
 export const saveConsentRecords = (records) => setStorageItem(STORAGE_KEYS.CONSENT_RECORDS, records);
 
-export const getClimateScenarios = () => INITIAL_CLIMATE_SCENARIOS;
+export const getCreditClaims = () => getStorageItem(STORAGE_KEYS.CREDIT_CLAIMS, INITIAL_CREDIT_CLAIMS);
+export const saveCreditClaims = (claims) => setStorageItem(STORAGE_KEYS.CREDIT_CLAIMS, claims);
 
+export const getCropLossEvents = () => getStorageItem(STORAGE_KEYS.CROP_LOSS_EVENTS, []);
+export const saveCropLossEvents = (events) => setStorageItem(STORAGE_KEYS.CROP_LOSS_EVENTS, events);
+
+export const getSyncConflicts = () => getStorageItem(STORAGE_KEYS.SYNC_CONFLICTS, INITIAL_SYNC_CONFLICTS);
+export const saveSyncConflicts = (conflicts) => setStorageItem(STORAGE_KEYS.SYNC_CONFLICTS, conflicts);
+
+export const getStudyParticipants = () => getStorageItem(STORAGE_KEYS.STUDY_PARTICIPANTS, []);
+export const saveStudyParticipants = (p) => setStorageItem(STORAGE_KEYS.STUDY_PARTICIPANTS, p);
+
+export const getStudyTimings = () => getStorageItem(STORAGE_KEYS.STUDY_TIMINGS, []);
+export const saveStudyTimings = (t) => setStorageItem(STORAGE_KEYS.STUDY_TIMINGS, t);
+
+export const getStudySurveys = () => getStorageItem(STORAGE_KEYS.STUDY_SURVEYS, []);
+export const saveStudySurveys = (s) => setStorageItem(STORAGE_KEYS.STUDY_SURVEYS, s);
+
+export const isStudySampleActive = () => getStorageItem(STORAGE_KEYS.STUDY_SAMPLE_ACTIVE, false);
+export const setStudySampleActive = (bool) => setStorageItem(STORAGE_KEYS.STUDY_SAMPLE_ACTIVE, Boolean(bool));
+
+export const clearStudyData = () => {
+  setStorageItem(STORAGE_KEYS.STUDY_PARTICIPANTS, []);
+  setStorageItem(STORAGE_KEYS.STUDY_TIMINGS, []);
+  setStorageItem(STORAGE_KEYS.STUDY_SURVEYS, []);
+  setStorageItem(STORAGE_KEYS.STUDY_SAMPLE_ACTIVE, false);
+};
+
+export const getTranslationReviews = () => getStorageItem(STORAGE_KEYS.TRANSLATION_REVIEWS, INITIAL_TRANSLATION_REVIEWS);
+export const saveTranslationReviews = (r) => setStorageItem(STORAGE_KEYS.TRANSLATION_REVIEWS, r);
+
+export const getResilienceOverrides = () => getStorageItem(STORAGE_KEYS.RESILIENCE_OVERRIDES, {});
+export const saveResilienceOverrides = (o) => setStorageItem(STORAGE_KEYS.RESILIENCE_OVERRIDES, o);
+
+export const getAccessibilitySettings = () => getStorageItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, {
+  textSize: 'normal', // 'normal', 'large', 'extra-large'
+  highContrast: false,
+  reducedMotion: false,
+  lowBandwidthMode: false,
+  farmerHelpMode: false,
+  voiceSpeechEnabled: true
+});
+export const saveAccessibilitySettings = (s) => setStorageItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, s);
+
+export const getDataAccessLog = () => getStorageItem(STORAGE_KEYS.DATA_ACCESS_LOG, [
+  { id: 'DAL-01', farmerId: 'FAR-001', accessedBy: 'Ramesh Kumar (ARO)', role: 'officer', timestamp: new Date(Date.now() - 3600000).toISOString(), purpose: 'KCC Pre-Disbursal Land Inspection' },
+  { id: 'DAL-02', farmerId: 'FAR-006', accessedBy: 'Suresh Gowda (BM)', role: 'manager', timestamp: new Date(Date.now() - 7200000).toISOString(), purpose: 'Credit Sanction Committee Review' }
+]);
+
+export const logDataAccess = ({ farmerId, accessedBy, role, purpose }) => {
+  try {
+    const existing = getDataAccessLog();
+    const entry = {
+      id: `DAL-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+      farmerId,
+      accessedBy,
+      role,
+      timestamp: new Date().toISOString(),
+      purpose: purpose || 'Operational File Review'
+    };
+    const updated = [entry, ...existing].slice(0, 300);
+    setStorageItem(STORAGE_KEYS.DATA_ACCESS_LOG, updated);
+  } catch (e) { /* ignore */ }
+};
+
+export const getDataCorrections = () => getStorageItem(STORAGE_KEYS.DATA_CORRECTION_REQUESTS, [
+  {
+    id: 'CORR-01',
+    farmerId: 'FAR-002',
+    farmerName: 'Lakshmi Devi',
+    field: 'Land Survey Number',
+    requestedCorrection: 'Correction from 41/A to 41/B per updated Patta Bhoomi passbook',
+    status: 'Pending Verification',
+    raisedBy: 'Lakshmi Devi (Farmer)',
+    raisedAt: '2026-08-20'
+  }
+]);
+export const saveDataCorrections = (corrections) => setStorageItem(STORAGE_KEYS.DATA_CORRECTION_REQUESTS, corrections);
+
+export const getClimateScenarios = () => INITIAL_CLIMATE_SCENARIOS;
 export const getWeatherRisks = () => INITIAL_WEATHER_RISKS;
 
 export const getSettings = () => getStorageItem(STORAGE_KEYS.SETTINGS, {
-  language: 'en', // 'en', 'hi', 'kn', 'ta', 'te'
-  demoRole: 'manager', // 'manager', 'officer', 'admin'
+  language: 'en',
+  demoRole: 'manager',
   isOfflineMode: false,
   activeBranchId: 'ALL',
   officerName: 'Gokul Sharma',
@@ -149,7 +248,7 @@ export const resetDemoData = () => {
       try {
         localStorage.removeItem(k);
       } catch (e) { /* ignore */ }
-      });
+    });
   }
   if (typeof window !== 'undefined') {
     window.location.reload();

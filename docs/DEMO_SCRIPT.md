@@ -46,11 +46,13 @@
 
 | Minute | Screen | Key Demonstration |
 | :--- | :--- | :--- |
-| **0:00 - 1:30** | Dashboard & Topbar | Multi-branch filtering, portfolio KPI breakdown, 10-language switcher (`en`, `hi`, `kn`, `ta`, `te`, `mr`, `bn`, `ml`, `gu`, `pa`). |
-| **1:30 - 3:00** | Farmers & Profile | Farmer registration with duplicate phone validation, landholding verification, Aadhaar masking, 7-factor resilience breakdown. |
-| **3:00 - 4:30** | Loan Applications & RBAC | Maker-Checker loan processing workflow. Relationship Officer submits loan; Branch Manager inspects, reviews land documents, and sanctions. |
-| **4:30 - 6:00** | Repayment Planner & Simulator | Contrast standard monthly EMI vs. harvest-linked bullet payment. Run drought and pest stress scenarios with yield sensitivity charts. |
-| **6:00 - 7:30** | Field Officer Mode & Offline Sync | Demonstrate offline village visit capture, photo attachments, and rule-based agricultural note extraction in regional vernacular. |
-| **7:30 - 8:30** | Language Preview & Coverage | Open `/language-preview` to inspect the 10-language matrix and live component translation previews. |
-| **8:30 - 9:30** | Audit Log & Privacy Center | Searchable regulatory audit trail, DPDP consent log, and CSV exports with masked personal identifiers. |
-| **9:30 - 10:00** | Tech Stack, Tests, & Q&A | Review 48/48 passing automated unit tests, production bundle optimization, and wrap up. |
+| **0:00 - 1:15** | Dashboard & Topbar | Multi-branch filtering, portfolio KPI breakdown, 10-language switcher, accessibility text scaling and Web Speech audio toggle. |
+| **1:15 - 2:30** | Farmers & Profile | Farmer registration with duplicate phone validation, landholding verification, Aadhaar masking, Explainable Resilience Index breakdown with confidence levels and factor weights. |
+| **2:30 - 3:45** | Repayment Planner & Projections | Expected, Best-Case, and Worst-Case multi-scenario cash flow curves with month-by-month input cost outflows and post-harvest APMC realization. |
+| **3:45 - 5:00** | Credit Protection Center | PMFBY 72-hour crop loss intimation countdown, simulated GPS/field photo tags, loss survey assessment, and direct RBI restructuring transition. |
+| **5:00 - 6:15** | Offline Conflict Center | Dual-officer collision demonstration, side-by-side reconciliation (Base vs. Field vs. Branch), mandatory justification comments, and sync history. |
+| **6:15 - 7:30** | Research Evaluation Lab | Live empirical task stopwatch (T1-T6), Brooke (1986) 10-item SUS scoring, comparative traditional baseline calculations, and differential privacy ($N < 5$ suppression). |
+| **7:30 - 8:30** | Fairness & Bias Audit | Demographic parity across marginal landholders and women borrowers, four-fifths (80%) rule compliance, and disparity alerts. |
+| **8:30 - 9:15** | Audit Log & Chain Verification | Cryptographic hash-chained audit trail ($H_i = \text{Hash}(H_{i-1} \mathbin{\Vert} \text{Record}_i)$), live "Verify Audit Chain Integrity" button, and DPDP staff access log. |
+| **9:15 - 10:00** | Tech Stack, Tests, & Q&A | Review 98/98 passing automated unit tests, zero build errors, production bundle optimization, and academic placement Q&A. |
+

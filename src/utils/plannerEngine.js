@@ -200,3 +200,96 @@ export function generateHarvestRepaymentPlan({
     }
   };
 }
+
+/**
+ * Generates month-by-month cash-flow curves across Best-Case, Expected, and Worst-Case scenarios.
+ * Connects agronomic stage expenditures with bullet repayment timing.
+ */
+export function generateMonthlyCashFlowProjections({
+  crop = 'Paddy',
+  sowingDate = '2026-06-15',
+  expectedHarvestDate = '2026-10-25',
+  expectedIncome = 220000,
+  inputExpenses = 65000,
+  existingDebt = 15000,
+  loanAmount = 100000,
+  interestRate = 7.0
+}) {
+  const sow = new Date(sowingDate);
+  const harvest = new Date(expectedHarvestDate);
+  const validDates = !isNaN(sow.getTime()) && !isNaN(harvest.getTime());
+  const startMonth = validDates ? sow.getMonth() : 5; // June default
+  const year = validDates ? sow.getFullYear() : 2026;
+
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const stages = [
+    { label: 'Land Prep & Seeds', costFraction: 0.35, isHarvest: false },
+    { label: 'Basal Fertilizer & Sowing', costFraction: 0.25, isHarvest: false },
+    { label: 'Vegetative Weeding & Irrigation', costFraction: 0.20, isHarvest: false },
+    { label: 'Pest Scouting & Grain Filling', costFraction: 0.10, isHarvest: false },
+    { label: 'Harvesting & Threshing', costFraction: 0.10, isHarvest: true },
+    { label: 'APMC Mandi Auction & Realization', costFraction: 0.00, isRealization: true }
+  ];
+
+  const repaymentPlan = generateHarvestRepaymentPlan({
+    crop,
+    sowingDate,
+    expectedHarvestDate,
+    loanAmount,
+    interestRate,
+    preference: 'bullet'
+  });
+
+  const bulletDue = repaymentPlan.harvestTotalPayable;
+
+  const buildScenario = (incomeMultiplier, expenseMultiplier, scenarioLabel) => {
+    const totalInc = Math.round(expectedIncome * incomeMultiplier);
+    const totalExp = Math.round(inputExpenses * expenseMultiplier);
+    let cumulative = 0;
+
+    const rows = stages.map((stg, i) => {
+      const mIdx = (startMonth + i) % 12;
+      const mName = `${monthNames[mIdx]} ${year + Math.floor((startMonth + i) / 12)}`;
+      
+      const outflowInputs = Math.round(totalExp * stg.costFraction);
+      const monthlyDebtServicing = Math.round(existingDebt / stages.length);
+      const harvestRepayment = stg.isRealization ? bulletDue : 0;
+      
+      // Inflow occurs in harvest realization month
+      const inflow = stg.isRealization ? totalInc : 0;
+      const totalOutflow = outflowInputs + monthlyDebtServicing + harvestRepayment;
+      const net = inflow - totalOutflow;
+      cumulative += net;
+
+      return {
+        month: mName,
+        stage: stg.label,
+        inflow,
+        outflowInputs,
+        debtServicing: monthlyDebtServicing,
+        harvestRepayment,
+        totalOutflow,
+        netCashFlow: net,
+        cumulativeSurplus: cumulative
+      };
+    });
+
+    return {
+      label: scenarioLabel,
+      totalIncome: totalInc,
+      totalExpenses: totalExp,
+      finalSurplus: cumulative,
+      isDeficit: cumulative < 0,
+      monthlyBreakdown: rows
+    };
+  };
+
+  return {
+    crop,
+    repaymentTotalDue: bulletDue,
+    expected: buildScenario(1.0, 1.0, 'Expected Baseline'),
+    bestCase: buildScenario(1.20, 0.95, 'Best-Case (Bumper Harvest + Favorable Mandi Price)'),
+    worstCase: buildScenario(0.65, 1.20, 'Worst-Case (Localized Climate Shock / Price Crash)')
+  };
+}
+

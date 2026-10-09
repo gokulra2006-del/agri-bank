@@ -24,7 +24,11 @@ import {
   TrendingUp,
   Sliders,
   MapPin,
-  Lock
+  Lock,
+  ShieldCheck,
+  RefreshCw,
+  Scale,
+  Activity
 } from 'lucide-react';
 import { hasRouteAccess } from '../utils/rbac';
 import { t } from '../utils/i18n';
@@ -49,7 +53,8 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
         { id: 'loans', labelKey: 'navigation.loans', defaultLabel: 'Loan Applications', icon: FileText },
         { id: 'eligibility', labelKey: 'navigation.eligibility', defaultLabel: 'Eligibility Assessment', icon: Calculator },
         { id: 'repayments', labelKey: 'navigation.repayments', defaultLabel: 'Repayments Ledger', icon: CalendarCheck2 },
-        { id: 'repayment-planner', labelKey: 'navigation.repaymentPlanner', defaultLabel: 'Harvest Repayment Planner', icon: Calendar }
+        { id: 'repayment-planner', labelKey: 'navigation.repaymentPlanner', defaultLabel: 'Harvest Repayment Planner', icon: Calendar },
+        { id: 'credit-protection', labelKey: 'navigation.creditProtection', defaultLabel: 'Credit Protection (PMFBY)', icon: ShieldCheck }
       ]
     },
     {
@@ -57,6 +62,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       defaultGroupLabel: 'Field Operations',
       items: [
         { id: 'field-mode', labelKey: 'navigation.fieldMode', defaultLabel: 'Field Officer Mode', icon: Compass },
+        { id: 'conflict-center', labelKey: 'navigation.conflictCenter', defaultLabel: 'Offline Conflict Center', icon: RefreshCw },
         { id: 'documents', labelKey: 'navigation.documents', defaultLabel: 'Documents Vault', icon: FolderOpen },
         { id: 'crop-calendar', labelKey: 'navigation.cropCalendar', defaultLabel: 'Crop Calendar', icon: Calendar },
         { id: 'branches', labelKey: 'navigation.branches', defaultLabel: 'Branches & Staff', icon: Building2 }
@@ -70,6 +76,14 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
         { id: 'risk-simulator', labelKey: 'navigation.riskSimulator', defaultLabel: 'What-If Risk Simulator', icon: Sliders },
         { id: 'village-heatmap', labelKey: 'navigation.villageHeatmap', defaultLabel: 'Village Risk Heatmap', icon: MapPin },
         { id: 'weather-risk', labelKey: 'navigation.weatherRisk', defaultLabel: 'Weather & Crop Risk', icon: CloudSun }
+      ]
+    },
+    {
+      groupKey: 'navigation.researchGroup',
+      defaultGroupLabel: 'Research & Evaluation',
+      items: [
+        { id: 'research-dashboard', labelKey: 'navigation.researchDashboard', defaultLabel: 'Research Evaluation Lab', icon: Activity },
+        { id: 'fairness-dashboard', labelKey: 'navigation.fairnessDashboard', defaultLabel: 'Fairness & Bias Audit', icon: Scale }
       ]
     },
     {

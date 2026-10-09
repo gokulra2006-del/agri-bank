@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../data/mockStore';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { generateHarvestRepaymentPlan } from '../utils/plannerEngine';
+import { generateHarvestRepaymentPlan, generateMonthlyCashFlowProjections } from '../utils/plannerEngine';
 
 export default function RepaymentPlannerPage({
   farmers = [],
@@ -38,6 +38,12 @@ export default function RepaymentPlannerPage({
   const [tenureMonths, setTenureMonths] = useState(6);
   const [preference, setPreference] = useState('auto');
 
+  // Cash-Flow Projections State
+  const [expectedIncome, setExpectedIncome] = useState(240000);
+  const [inputExpenses, setInputExpenses] = useState(65000);
+  const [existingDebt, setExistingDebt] = useState(15000);
+  const [selectedScenario, setSelectedScenario] = useState('expected'); // 'expected', 'bestCase', 'worstCase'
+
   // Confirmation modal
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [appliedSuccessMsg, setAppliedSuccessMsg] = useState(null);
@@ -60,6 +66,25 @@ export default function RepaymentPlannerPage({
   } catch (err) {
     plan = null;
   }
+
+  // Compute monthly cash flow projections
+  let cashFlowProjections = null;
+  try {
+    cashFlowProjections = generateMonthlyCashFlowProjections({
+      crop,
+      sowingDate,
+      expectedHarvestDate,
+      expectedIncome: Number(expectedIncome),
+      inputExpenses: Number(inputExpenses),
+      existingDebt: Number(existingDebt),
+      loanAmount: Number(loanAmount),
+      interestRate: Number(interestRate)
+    });
+  } catch (e) {
+    cashFlowProjections = null;
+  }
+
+  const activeScenarioData = cashFlowProjections ? cashFlowProjections[selectedScenario] : null;
 
   const handleApplyPlan = () => {
     if (!activeLoan) {
@@ -352,6 +377,134 @@ export default function RepaymentPlannerPage({
           </div>
         )}
       </div>
+
+      {/* Monthly Cash-Flow Projections Section */}
+      {cashFlowProjections && (
+        <div className="card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <TrendingUp size={18} color="#059669" />
+                Month-by-Month Harvest Cash-Flow Projections
+              </h3>
+              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '0.25rem 0 0 0' }}>
+                Simulates operational liquidity during vegetative non-cash months versus post-harvest mandi realization.
+              </p>
+            </div>
+
+            {/* Scenario Selector Tabs */}
+            <div style={{ display: 'flex', gap: '0.375rem', backgroundColor: '#f1f5f9', padding: '0.25rem', borderRadius: '6px' }}>
+              {[
+                { id: 'expected', label: 'Expected' },
+                { id: 'bestCase', label: 'Best-Case (+20%)' },
+                { id: 'worstCase', label: 'Worst-Case (-35%)' }
+              ].map(sc => (
+                <button
+                  key={sc.id}
+                  onClick={() => setSelectedScenario(sc.id)}
+                  style={{
+                    padding: '0.375rem 0.75rem',
+                    borderRadius: '4px',
+                    border: 'none',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    backgroundColor: selectedScenario === sc.id ? '#ffffff' : 'transparent',
+                    color: selectedScenario === sc.id ? '#0f172a' : '#64748b',
+                    boxShadow: selectedScenario === sc.id ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
+                  }}
+                >
+                  {sc.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Editable Assumptions Bar */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', padding: '0.875rem', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 600, color: '#64748b' }}>Expected Gross Revenue</label>
+              <input
+                type="number"
+                step="5000"
+                value={expectedIncome}
+                onChange={(e) => setExpectedIncome(Number(e.target.value))}
+                style={{ width: '100%', padding: '0.375rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', fontWeight: 600 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 600, color: '#64748b' }}>Estimated Input Costs</label>
+              <input
+                type="number"
+                step="5000"
+                value={inputExpenses}
+                onChange={(e) => setInputExpenses(Number(e.target.value))}
+                style={{ width: '100%', padding: '0.375rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', fontWeight: 600 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 600, color: '#64748b' }}>Existing Debt Obligations</label>
+              <input
+                type="number"
+                step="2000"
+                value={existingDebt}
+                onChange={(e) => setExistingDebt(Number(e.target.value))}
+                style={{ width: '100%', padding: '0.375rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', fontWeight: 600 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 600, color: '#64748b' }}>Scenario Net Surplus</label>
+              <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem', color: activeScenarioData.finalSurplus >= 0 ? '#15803d' : '#b91c1c' }}>
+                {formatINR(activeScenarioData.finalSurplus)}
+              </div>
+            </div>
+          </div>
+
+          {/* Cashflow Table */}
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Month</th>
+                  <th style={{ padding: '0.5rem 0.75rem' }}>Agronomic Stage</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Farm Inflow</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Input Outflow</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Debt Servicing</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Harvest Bullet</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Net Monthly</th>
+                  <th style={{ padding: '0.5rem 0.75rem', textAlign: 'right' }}>Cumulative Surplus</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeScenarioData.monthlyBreakdown.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '0.5rem 0.75rem', fontWeight: 600 }}>{row.month}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', color: '#475569' }}>{row.stage}</td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', fontWeight: row.inflow > 0 ? 700 : 400, color: row.inflow > 0 ? '#15803d' : '#94a3b8' }}>
+                      {formatINR(row.inflow)}
+                    </td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', color: '#b91c1c' }}>
+                      -{formatINR(row.outflowInputs)}
+                    </td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', color: '#64748b' }}>
+                      -{formatINR(row.debtServicing)}
+                    </td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', fontWeight: row.harvestRepayment > 0 ? 700 : 400, color: row.harvestRepayment > 0 ? '#2563eb' : '#94a3b8' }}>
+                      {row.harvestRepayment > 0 ? `-${formatINR(row.harvestRepayment)}` : '₹0'}
+                    </td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', fontWeight: 600, color: row.netCashFlow >= 0 ? '#15803d' : '#b91c1c' }}>
+                      {row.netCashFlow >= 0 ? `+${formatINR(row.netCashFlow)}` : formatINR(row.netCashFlow)}
+                    </td>
+                    <td style={{ padding: '0.5rem 0.75rem', textAlign: 'right', fontWeight: 700, color: row.cumulativeSurplus >= 0 ? '#15803d' : '#b91c1c' }}>
+                      {formatINR(row.cumulativeSurplus)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Generated Schedule Table */}
       {plan && (

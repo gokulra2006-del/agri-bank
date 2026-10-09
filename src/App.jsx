@@ -30,6 +30,12 @@ const VillageHeatmapPage = lazy(() => import('./pages/VillageHeatmapPage'));
 const PrivacyCenterPage = lazy(() => import('./pages/PrivacyCenterPage'));
 const ImpactDashboardPage = lazy(() => import('./pages/ImpactDashboardPage'));
 const LanguagePreviewPage = lazy(() => import('./pages/LanguagePreviewPage'));
+const CreditProtectionCenter = lazy(() => import('./pages/CreditProtectionCenter'));
+const ConflictCenterPage = lazy(() => import('./pages/ConflictCenterPage'));
+const FairnessDashboardPage = lazy(() => import('./pages/FairnessDashboardPage'));
+const ResearchDashboardPage = lazy(() => import('./pages/ResearchDashboardPage'));
+
+import AccessibilityModal from './components/AccessibilityModal';
 
 const PageLoader = () => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '360px', gap: '0.75rem', color: '#64748b' }} role="status" aria-live="polite">
@@ -65,19 +71,37 @@ import {
   getAssistanceTracker,
   saveAssistanceTracker,
   getVillageHeatmaps,
-  saveVillageHeatmaps
+  saveVillageHeatmaps,
+  loadStore,
+  updateStore,
+  STORES
 } from './data/mockStore';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
+  const [showA11yModal, setShowA11yModal] = useState(false);
 
   // App Settings, Role, Language, and Offline states
   const [settings, setSettingsState] = useState(getSettings());
   const currentRole = settings.demoRole || 'manager';
   const currentLang = settings.language || 'en';
   const isOfflineMode = Boolean(settings.isOfflineMode);
+
+  // Accessibility Settings
+  const [a11ySettings, setA11ySettings] = useState(() => loadStore(STORES.ACCESSIBILITY_SETTINGS) || {
+    fontSize: 'normal',
+    highContrast: false,
+    lowBandwidth: false,
+    farmerHelpMode: false,
+    speechRate: 0.9
+  });
+
+  const handleUpdateA11ySettings = (newSettings) => {
+    setA11ySettings(newSettings);
+    updateStore(STORES.ACCESSIBILITY_SETTINGS, newSettings);
+  };
 
   // Deep selection IDs
   const [selectedFarmerId, setSelectedFarmerId] = useState(null);
@@ -391,8 +415,18 @@ export default function App() {
     setCurrentPage('loan-detail');
   };
 
+  const fontMultiplier = a11ySettings.fontSize === 'extra-large' ? 1.25 : a11ySettings.fontSize === 'large' ? 1.12 : 1;
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+    <div
+      style={{
+        display: 'flex',
+        minHeight: '100vh',
+        backgroundColor: a11ySettings.highContrast ? '#0f172a' : '#f8fafc',
+        fontSize: fontMultiplier !== 1 ? `${fontMultiplier * 100}%` : undefined,
+        filter: a11ySettings.highContrast ? 'contrast(115%)' : undefined
+      }}
+    >
       {/* Sidebar */}
       <Sidebar
         currentPage={currentPage}
@@ -428,6 +462,7 @@ export default function App() {
           onRoleChange={handleRoleChange}
           currentLang={currentLang}
           onLangChange={handleLangChange}
+          onOpenAccessibility={() => setShowA11yModal(true)}
         />
 
         {/* Global Notification Panel Dropdown */}
@@ -670,9 +705,55 @@ export default function App() {
                   onNavigate={handleNavigate}
                 />
               )}
+
+              {currentPage === 'credit-protection' && (
+                <CreditProtectionCenter
+                  loans={loans}
+                  farmers={farmers}
+                  onUpdateLoanStatus={handleUpdateLoanStatus}
+                  onLogAudit={logAudit}
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'conflict-center' && (
+                <ConflictCenterPage
+                  farmers={farmers}
+                  loans={loans}
+                  onUpdateFarmer={handleUpdateFarmer}
+                  onUpdateLoan={handleUpdateLoanStatus}
+                  onLogAudit={logAudit}
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'fairness-dashboard' && (
+                <FairnessDashboardPage
+                  loans={loans}
+                  farmers={farmers}
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'research-dashboard' && (
+                <ResearchDashboardPage
+                  currentRole={currentRole}
+                />
+              )}
             </Suspense>
           )}
         </main>
+
+        {/* Global Accessibility Settings Modal */}
+        {showA11yModal && (
+          <AccessibilityModal
+            isOpen={showA11yModal}
+            onClose={() => setShowA11yModal(false)}
+            currentLang={currentLang}
+            settings={a11ySettings}
+            onUpdateSettings={handleUpdateA11ySettings}
+          />
+        )}
 
         {/* Compliant Footer with Exact Required Disclaimer */}
         <footer
@@ -693,7 +774,7 @@ export default function App() {
               Academic prototype for demonstration purposes only. Not connected to a live banking system.
             </span>
             <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-              Designed for Ujjivan Small Finance Bank Placement Project • Demo Data Mode Enabled
+              Designed for Small Finance Bank Placement Project • Research Prototype Demonstration
             </span>
           </div>
         </footer>

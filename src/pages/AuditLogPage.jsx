@@ -7,15 +7,25 @@ import {
   Calendar,
   Clock,
   ArrowUpDown,
-  Download
+  Download,
+  CheckCircle2,
+  AlertTriangle,
+  RotateCw,
+  Hash
 } from 'lucide-react';
-import { getAuditLogs } from '../utils/audit';
+import { getAuditLogs, verifyAuditChain } from '../utils/audit';
 
 export default function AuditLogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [actionFilter, setActionFilter] = useState('ALL');
+  const [verificationResult, setVerificationResult] = useState(null);
   const auditLogs = getAuditLogs();
+
+  const handleVerifyChain = () => {
+    const res = verifyAuditChain(auditLogs);
+    setVerificationResult(res);
+  };
 
   const filtered = auditLogs.filter(log => {
     const matchSearch =
@@ -32,9 +42,9 @@ export default function AuditLogPage() {
 
   const handleExportCSV = () => {
     let csv = "data:text/csv;charset=utf-8,";
-    csv += "Audit ID,Timestamp,Action,User Role,Entity ID,Previous Status,New Status,Audit Notes\n";
+    csv += "Audit ID,Timestamp,Action,User Role,Entity ID,Previous Status,New Status,PrevHash,EntryHash,Audit Notes\n";
     filtered.forEach(l => {
-      csv += `"${l.id}","${l.timestamp}","${l.action}","${l.userRole}","${l.entityId}","${l.previousStatus}","${l.newStatus}","${l.notes.replace(/"/g, '""')}"\n`;
+      csv += `"${l.id}","${l.timestamp}","${l.action}","${l.userRole}","${l.entityId}","${l.previousStatus}","${l.newStatus}","${l.prevHash || ''}","${l.hash || ''}","${(l.notes || '').replace(/"/g, '""')}"\n`;
     });
 
     const encodedUri = encodeURI(csv);
@@ -52,25 +62,72 @@ export default function AuditLogPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
               System Audit Trail & Compliance Ledger
             </h1>
             <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '0.2rem 0.6rem', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3' }}>
               Manager & Admin Only
             </span>
           </div>
-          <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-            Immutable chronological record of loan sanctions, disbursements, status changes, and offline sync events
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '0.25rem 0 0 0' }}>
+            Tamper-evident audit design in the prototype. A production version would require server-side storage, encryption, access controls and independent audit infrastructure.
           </p>
         </div>
 
-        <div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={handleVerifyChain}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+              backgroundColor: '#15803d',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '0.5rem 0.875rem',
+              fontSize: '0.8125rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            <ShieldCheck size={16} />
+            Verify Audit Chain Integrity
+          </button>
+
           <button className="btn btn-primary" onClick={handleExportCSV}>
             <Download size={15} />
             Export Audit Trail (CSV)
           </button>
         </div>
       </div>
+
+      {/* Verification Result Banner */}
+      {verificationResult && (
+        <div style={{
+          backgroundColor: verificationResult.isValid ? '#f0fdf4' : '#fef2f2',
+          border: verificationResult.isValid ? '1px solid #bbf7d0' : '1px solid #fecaca',
+          borderRadius: '8px',
+          padding: '0.875rem 1.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem'
+        }}>
+          {verificationResult.isValid ? (
+            <CheckCircle2 size={20} style={{ color: '#15803d', flexShrink: 0 }} />
+          ) : (
+            <AlertTriangle size={20} style={{ color: '#dc2626', flexShrink: 0 }} />
+          )}
+          <div>
+            <div style={{ fontSize: '0.875rem', fontWeight: 700, color: verificationResult.isValid ? '#166534' : '#991b1b' }}>
+              {verificationResult.isValid ? 'Audit Chain Verification: INTACT' : 'Audit Chain Verification: INTEGRITY WARNING'}
+            </div>
+            <div style={{ fontSize: '0.8125rem', color: verificationResult.isValid ? '#15803d' : '#b91c1c', marginTop: '0.125rem' }}>
+              {verificationResult.message}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="card" style={{ padding: '1rem' }}>
@@ -111,7 +168,7 @@ export default function AuditLogPage() {
             <thead>
               <tr>
                 <th>Timestamp</th>
-                <th>Audit Action</th>
+                <th>Audit Action & Hash</th>
                 <th>Performed By</th>
                 <th>Entity Target</th>
                 <th>Status Shift</th>
@@ -141,6 +198,11 @@ export default function AuditLogPage() {
                         {entry.action}
                       </span>
                       <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>{entry.id}</span>
+                      {entry.hash && (
+                        <div style={{ fontFamily: 'monospace', fontSize: '0.625rem', color: '#059669', marginTop: '0.125rem' }}>
+                          ⛓️ {entry.hash.slice(0, 8)}...
+                        </div>
+                      )}
                     </td>
                     <td>
                       <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#334155' }}>
@@ -173,3 +235,4 @@ export default function AuditLogPage() {
     </div>
   );
 }
+
