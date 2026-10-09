@@ -7,12 +7,19 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node tests/resilienceEngine.test.js && node tests/climatePlatform.test.js && node tests/i18n.test.js && node tests/researchAndGovernance.test.js"
+    "server": "node server/index.js",
+    "migrate": "node server/database/migrate.js",
+    "test": "node tests/resilienceEngine.test.js && node tests/climatePlatform.test.js && node tests/i18n.test.js && node tests/researchAndGovernance.test.js && node tests/backendSecurity.test.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "lucide-react": "^0.468.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

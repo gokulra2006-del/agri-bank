@@ -79,7 +79,9 @@ export const en = {
     helpDesk: 'Farmer Help Desk',
     notifications: 'Notifications',
     settings: 'Settings',
-    languagePreview: 'Language Preview & Coverage'
+    languagePreview: 'Language Preview & Coverage',
+    syncMonitor: 'Sync Monitor & Telemetry',
+    adminOps: 'Admin Operations & Telemetry'
   },
   dashboard: {
     title: 'Agriculture Credit Overview',

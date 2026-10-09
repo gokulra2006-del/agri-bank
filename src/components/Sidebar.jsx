@@ -28,7 +28,9 @@ import {
   ShieldCheck,
   RefreshCw,
   Scale,
-  Activity
+  Activity,
+  Server,
+  Radio
 } from 'lucide-react';
 import { hasRouteAccess } from '../utils/rbac';
 import { t } from '../utils/i18n';
@@ -62,6 +64,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       defaultGroupLabel: 'Field Operations',
       items: [
         { id: 'field-mode', labelKey: 'navigation.fieldMode', defaultLabel: 'Field Officer Mode', icon: Compass },
+        { id: 'sync-monitor', labelKey: 'navigation.syncMonitor', defaultLabel: 'Sync Monitor & Telemetry', icon: Radio },
         { id: 'conflict-center', labelKey: 'navigation.conflictCenter', defaultLabel: 'Offline Conflict Center', icon: RefreshCw },
         { id: 'documents', labelKey: 'navigation.documents', defaultLabel: 'Documents Vault', icon: FolderOpen },
         { id: 'crop-calendar', labelKey: 'navigation.cropCalendar', defaultLabel: 'Crop Calendar', icon: Calendar },
@@ -92,6 +95,7 @@ export default function Sidebar({ currentPage, setCurrentPage, isOpen, onClose, 
       items: [
         { id: 'schemes', labelKey: 'navigation.schemes', defaultLabel: 'Schemes & Subsidies', icon: Landmark },
         { id: 'privacy-center', labelKey: 'navigation.privacyCenter', defaultLabel: 'Farmer Consent & Privacy', icon: Lock },
+        { id: 'admin-ops', labelKey: 'navigation.adminOps', defaultLabel: 'Admin Operations', icon: Server },
         { id: 'reports', labelKey: 'navigation.reports', defaultLabel: 'Reports & Export', icon: BarChart3 },
         { id: 'audit-log', labelKey: 'navigation.auditLog', defaultLabel: 'Audit Trail', icon: History },
         { id: 'helpDesk', labelKey: 'navigation.helpDesk', defaultLabel: 'Farmer Help Desk', icon: LifeBuoy },

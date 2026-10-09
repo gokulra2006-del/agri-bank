@@ -62,26 +62,39 @@ flowchart TD
 ## 🚀 Quick Start & Local Execution
 
 ### Prerequisites
-- Node.js (v18.0.0 or higher)
+- Node.js (v18.0.0 or higher, Node 20+ recommended)
 - npm (v9.0.0 or higher)
+- PostgreSQL (v14+ optional; runs in-memory demo fallback if unconfigured)
 
-### Run Unit Tests
+### 1. Run Automated Tests
 ```bash
 npm test
 ```
-*Executes all 98 automated unit tests across 4 test suites.*
+*Executes all 118 automated unit and security tests across 5 test suites (Resilience, Climate, 10-Language i18n, Governance, and Backend Security).*
 
-### Run Development Server
+### 2. Run Secure Express Backend
+```bash
+npm run server
+```
+*Starts the Express/Node.js API with JWT authentication, sliding-window rate limiter, and cryptographic forward hash-chained audit logging on `http://localhost:5000`.*
+
+### 3. Run Frontend Development Server
 ```bash
 npm run dev
 ```
-Open **`http://localhost:5173/`** in your browser.
+*Launches the React 18 / Vite 5 client on `http://localhost:5173/`.*
 
-### Production Build
+### 4. Database Migrations (Optional for PostgreSQL)
+```bash
+npm run migrate
+```
+*Applies 15 relational tables with check constraints and indices defined in `server/database/schema.sql`.*
+
+### 5. Production Build
 ```bash
 npm run build
 ```
-Generates an optimized, code-split production bundle in `dist/`.
+*Generates an optimized, code-split production bundle in `dist/`.*
 
 ---
 
@@ -112,45 +125,61 @@ Integrates a complete 8-stage loss-to-restructuring pipeline:
 - Independent surveyor inspection tracking
 - Direct transition into RBI-authorized loan restructuring (moratorium extension & tenure recalibration)
 
-### 4. Offline Conflict Reconciliation Center
+### 4. Offline Conflict Reconciliation & Sync Monitor
 Deterministic 3-way reconciliation (Base vs. Field vs. Branch):
 - Dual-officer collision simulator
 - Side-by-side visual diff highlighting
 - Field-by-field merge options with mandatory officer justification comments
-- Exponential backoff retry engine for intermittent network reconnection
+- Dedicated Sync Monitor (`/sync-monitor`) with idempotency key telemetry and exponential retry backoff
 
 ### 5. Research & Usability Evaluation Lab
 - Precision stopwatch timers for standard benchmark tasks (`T1` through `T6`)
 - Standard Brooke (1986) 10-item System Usability Scale (SUS) survey
 - Traditional manual baseline comparison with automated percentage time reduction
 - Optional bannered sample dataset with one-click purge
-- DPDP differential privacy ($N < 5$ suppression)
+- DPDP differential privacy ($N < 5$ suppression) and multi-format research dataset export (CSV, JSON, Anonymized)
 
 ### 6. 10-Language Full-Page Translation & Accessibility
 Supports: English, हिन्दी (Hindi), ಕನ್ನಡ (Kannada), தமிழ் (Tamil), తెలుగు (Telugu), मराठी (Marathi), বাংলা (Bengali), മലയാളം (Malayalam), ગુજરાતી (Gujarati), and ਪੰਜਾਬੀ (Punjabi).
-- *Linguistic Validation Status Notice: All 10 languages have complete dictionary coverage. Selected translations require native-speaker and field usability validation before production deployment.*
 - Web Speech API text-to-speech with Indic BCP-47 tags
 - Simplified agrarian analogies for 8 core banking concepts
 - Text size scaling (Normal, Large, Extra Large) and High-Contrast mode
+
+### 7. Phase 6 Secure Backend & Admin Operations Telemetry
+- Express / PostgreSQL architecture with connection pooling and in-memory demo fallback
+- Bearer token authentication with bcrypt password hashing and 8-hour session expiration
+- Four-Eye dual control: Relationship Officers originate; Branch Managers sanction (self-approval prohibited)
+- Admin Operations Dashboard (`/admin-ops`) showing real-time API uptime, TAT metrics, and cryptographic hash chain verification
 
 ---
 
 ## 📚 Complete Project Documentation
 
-Detailed research, architecture, and governance guides:
+### Architecture & Engineering
+- [Backend Architecture Specification](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/BACKEND_ARCHITECTURE.md)
+- [REST API Documentation](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/API_DOCUMENTATION.md)
+- [Relational Database Schema (PostgreSQL DDL)](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DATABASE_SCHEMA.md)
+- [Security Model & Dual-Control Governance](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/SECURITY_MODEL.md)
+- [STRIDE Threat Model & Mitigations](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/THREAT_MODEL.md)
+- [Deployment & Operations Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEPLOYMENT_GUIDE.md)
+
+### Research & Usability Evaluation
+- [Pilot Study Guide & SUS Protocol](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/PILOT_STUDY_GUIDE.md)
 - [Research Protocol (RQ1 – RQ7)](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/RESEARCH_PROTOCOL.md)
 - [Empirical Evaluation Plan & SUS Methodology](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/EVALUATION_PLAN.md)
 - [Algorithmic Fairness & Bias Governance](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/FAIRNESS_AND_BIAS.md)
 - [Accessibility & Rural Interface Guidelines](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/ACCESSIBILITY.md)
 - [Offline-First Architecture & Conflict Reconciliation](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/OFFLINE_SYNC_DESIGN.md)
-- [Data Governance, DPDP & Audit Trail](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DATA_GOVERNANCE.md)
-- [36 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
-- [5-Minute & 10-Minute Live Demo Scripts](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEMO_SCRIPT.md)
+- [Data Governance, DPDP Act 2023 & Audit Trail](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DATA_GOVERNANCE.md)
 - [10-Language i18n Architecture Guide](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/I18N_ARCHITECTURE.md)
 - [Agricultural Banking Translation Glossary](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/TRANSLATION_GLOSSARY.md)
+
+### Placement & Demonstration
+- [36 Placement Interview Questions & Answers](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/INTERVIEW_PREP.md)
+- [5-Minute & 10-Minute Live Demo Scripts](file:///c:/Users/gokul/Desktop/PROJECTS/agri_bnk/docs/DEMO_SCRIPT.md)
 
 ---
 
 ## 📄 License & Academic Disclaimer
 
-This project is an **academic prototype** created strictly for demonstration, evaluation, and educational purposes. It is not affiliated with, endorsed by, or connected to Ujjivan Small Finance Bank's live core banking infrastructure. All customer identities, land records, and account numbers are simulated demo artifacts.
+This project is an **academic prototype** created strictly for demonstration, evaluation, and educational purposes. It is not affiliated with, endorsed by, or connected to Ujjivan Small Finance Bank, UIDAI, or RBI live banking infrastructure. All customer identities, land records, and account numbers are simulated demo artifacts.

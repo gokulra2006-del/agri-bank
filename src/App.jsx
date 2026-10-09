@@ -34,6 +34,8 @@ const CreditProtectionCenter = lazy(() => import('./pages/CreditProtectionCenter
 const ConflictCenterPage = lazy(() => import('./pages/ConflictCenterPage'));
 const FairnessDashboardPage = lazy(() => import('./pages/FairnessDashboardPage'));
 const ResearchDashboardPage = lazy(() => import('./pages/ResearchDashboardPage'));
+const SyncMonitorPage = lazy(() => import('./pages/SyncMonitorPage'));
+const AdminOpsPage = lazy(() => import('./pages/AdminOpsPage'));
 
 import AccessibilityModal from './components/AccessibilityModal';
 
@@ -737,6 +739,18 @@ export default function App() {
 
               {currentPage === 'research-dashboard' && (
                 <ResearchDashboardPage
+                  currentRole={currentRole}
+                />
+              )}
+
+              {currentPage === 'sync-monitor' && (
+                <SyncMonitorPage
+                  onNavigate={handleNavigate}
+                />
+              )}
+
+              {currentPage === 'admin-ops' && (
+                <AdminOpsPage
                   currentRole={currentRole}
                 />
               )}

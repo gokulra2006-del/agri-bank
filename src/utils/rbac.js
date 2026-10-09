@@ -41,7 +41,8 @@ export const ROLE_PERMISSIONS = {
       'notifications',
       'settings',
       'language-preview',
-      'research-dashboard'
+      'research-dashboard',
+      'sync-monitor'
     ],
     canApproveLoan: false,
     canRejectLoan: false,
@@ -85,7 +86,9 @@ export const ROLE_PERMISSIONS = {
       'help-desk',
       'notifications',
       'settings',
-      'language-preview'
+      'language-preview',
+      'sync-monitor',
+      'admin-ops'
     ],
     canApproveLoan: true,
     canRejectLoan: true,
@@ -124,7 +127,9 @@ export const ROLE_PERMISSIONS = {
       'help-desk',
       'notifications',
       'settings',
-      'language-preview'
+      'language-preview',
+      'sync-monitor',
+      'admin-ops'
     ],
     canApproveLoan: false,
     canRejectLoan: false,
@@ -157,7 +162,9 @@ export const ROLE_PERMISSIONS = {
       'village-heatmap',
       'privacy-center',
       'help-desk',
-      'settings'
+      'settings',
+      'sync-monitor',
+      'admin-ops'
     ],
     canApproveLoan: false,
     canRejectLoan: false,
