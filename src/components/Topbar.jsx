@@ -19,7 +19,8 @@ export default function Topbar({
   currentRole = 'manager',
   onRoleChange = () => {},
   currentLang = 'en',
-  onLangChange = () => {}
+  onLangChange = () => {},
+  onOpenAccessibility
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const branches = getBranches();
